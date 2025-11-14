@@ -650,11 +650,157 @@ function Matches({ activeDogId }) {
   );
 }
 
+function CreatePost({ onPostCreated }) {
+  const [post, setPost] = useState({
+    caption: "",
+    imageUrl: ""
+  });
+  const [imagePreview, setImagePreview] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [error, setError] = useState("");
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image size must be less than 5MB');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result;
+        setImagePreview(dataUrl);
+        setPost(prev => ({ ...prev, imageUrl: dataUrl }));
+        setError("");
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  async function handlePost(e) {
+    e.preventDefault();
+    if (!post.imageUrl) {
+      setError("Please select an image to post");
+      return;
+    }
+    
+    setPosting(true);
+    setError("");
+    
+    try {
+      // Create a post as a dog entry
+      const payload = {
+        name: post.caption || "Community Post",
+        breed: "Community Share",
+        images: [post.imageUrl],
+        temperament: ["community-post"]
+      };
+      
+      const res = await api.post("/dogs/create", payload);
+      onPostCreated(res.data);
+      
+      // Reset form
+      setPost({ caption: "", imageUrl: "" });
+      setImagePreview("");
+    } catch (err) {
+      console.error("Error creating post:", err);
+      setError("Failed to post. Please try again.");
+    } finally {
+      setPosting(false);
+    }
+  }
+
+  return (
+    <div className="panel create-post-panel">
+      <div className="panel-header">
+        <h2>📸 Create Post</h2>
+        <p>Share a photo with the community</p>
+      </div>
+      {error && (
+        <div className="error-message">{error}</div>
+      )}
+      <form onSubmit={handlePost} className="panel-form">
+        <label className="auth-label">
+          Caption (optional)
+          <input
+            type="text"
+            className="auth-input"
+            value={post.caption}
+            onChange={(e) => setPost(prev => ({ ...prev, caption: e.target.value }))}
+            placeholder="What's on your mind?"
+            maxLength="200"
+          />
+        </label>
+
+        <div className="image-upload-section">
+          <label className="auth-label">
+            Upload Photo
+            <div className="file-upload-wrapper">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="file-input"
+                id="post-photo"
+              />
+              <label htmlFor="post-photo" className="file-upload-btn">
+                📷 Choose Photo
+              </label>
+            </div>
+          </label>
+
+          <div className="upload-divider">
+            <span>or</span>
+          </div>
+
+          <label className="auth-label">
+            Image URL
+            <input
+              type="url"
+              className="auth-input"
+              value={post.imageUrl}
+              onChange={(e) => setPost(prev => ({ ...prev, imageUrl: e.target.value }))}
+              placeholder="https://example.com/photo.jpg"
+            />
+          </label>
+
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="Preview" />
+              <button
+                type="button"
+                className="remove-preview"
+                onClick={() => {
+                  setImagePreview("");
+                  setPost(prev => ({ ...prev, imageUrl: "" }));
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
+        <button type="submit" className="btn btn-primary full-width" disabled={posting}>
+          {posting ? "Posting..." : "📤 Post to Community"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 function Community({ activeDogId }) {
   const [allDogs, setAllDogs] = useState([]);
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     async function fetchAllDogs() {
@@ -672,7 +818,13 @@ function Community({ activeDogId }) {
       }
     }
     fetchAllDogs();
-  }, []);
+  }, [refreshTrigger]);
+
+  function handlePostCreated(newPost) {
+    setAllDogs(prev => [newPost, ...prev]);
+    setToast("✅ Posted to community!");
+    setTimeout(() => setToast(""), 2000);
+  }
 
   async function handleLike(dogId) {
     if (!activeDogId) {
@@ -709,11 +861,14 @@ function Community({ activeDogId }) {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header">
-        <h2>Community Stream</h2>
-        <p>Browse all dogs in the community</p>
-      </div>
+    <>
+      <CreatePost onPostCreated={handlePostCreated} />
+      
+      <div className="panel">
+        <div className="panel-header">
+          <h2>Community Stream</h2>
+          <p>Browse all dogs in the community</p>
+        </div>
 
       {loading ? (
         <p className="empty-state">Loading community dogs...</p>
@@ -773,7 +928,8 @@ function Community({ activeDogId }) {
           ))}
         </div>
       )}      {toast && <div className="toast">{toast}</div>}
-    </div>
+      </div>
+    </>
   );
 }
 
