@@ -169,6 +169,31 @@ button {
   background: linear-gradient(135deg, #f5f2ea 0%, #faf8f3 100%);
 }
 
+/* Mobile Header for Auth Pages */
+.auth-mobile-header {
+  display: none;
+  background: linear-gradient(135deg, #8b7355 0%, #6b5545 100%);
+  padding: 32px 20px;
+  text-align: center;
+  color: #faf8f3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-mobile-logo {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.auth-mobile-tagline {
+  margin: 8px 0 0 0;
+  font-size: 1rem;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
 .auth-hero {
   padding: 40px 44px;
   display: flex;
@@ -778,6 +803,10 @@ select.auth-input {
 @media (max-width: 960px) {
   .auth-shell {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .auth-mobile-header {
+    display: block;
   }
 
   .auth-hero {

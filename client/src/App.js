@@ -11,19 +11,8 @@ function Login({ onLogin, switchToRegister }) {
     e.preventDefault();
     setError("");
     
-    // If no email/password provided, allow direct access
-    if (!email || !password) {
-      onLogin("demo-token", { name: "Demo User", email: "demo@pawsocial.com" });
-      return;
-    }
-    
-    try {
-      const res = await api.post("/auth/login", { email, password });
-      onLogin(res.data.token, res.data.user);
-    } catch (err) {
-      // On any error, just allow access anyway
-      onLogin("demo-token", { name: "Demo User", email: "demo@pawsocial.com" });
-    }
+    // Always allow access - no authentication required
+    onLogin("demo-token", { name: "Demo User", email: "demo@pawsocial.com" });
   }
 
   function handleQuickAccess() {
@@ -51,29 +40,29 @@ function Login({ onLogin, switchToRegister }) {
 
       <form onSubmit={handleLogin} className="auth-form">
         <label className="auth-label">
-          Email
+          Email (optional)
           <input
             className="auth-input"
-            type="email"
+            type="text"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="you@example.com"
+            placeholder="you@example.com (optional)"
           />
         </label>
 
         <label className="auth-label">
-          Password
+          Password (optional)
           <input
             className="auth-input"
-            type="password"
+            type="text"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="••••••••"
+            placeholder="No password needed"
           />
         </label>
 
         <button type="submit" className="btn btn-outline full-width">
-          Log in (no credentials required)
+          Enter App →
         </button>
       </form>
 
@@ -759,6 +748,11 @@ function App() {
   if (view === "login" || view === "register") {
     return (
       <div className="app-shell auth-shell">
+        <div className="auth-mobile-header">
+          <h1 className="auth-mobile-logo">🐾 Dog Match</h1>
+          <p className="auth-mobile-tagline">Find pawfect friends for your pup</p>
+        </div>
+        
         <div className="auth-hero">
           <div className="auth-hero-inner">
             <h1>DogMatch</h1>
