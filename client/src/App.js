@@ -223,10 +223,15 @@ function AddDog({ token, onDogCreated }) {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState("");
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
+    if (name === 'imageUrl' && value) {
+      // If user types a URL, update preview
+      setImagePreview(value);
+    }
     setDog(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   }
 
@@ -260,26 +265,38 @@ function AddDog({ token, onDogCreated }) {
   async function handleSave(e) {
     e.preventDefault();
     setError("");
+    
+    // Validate required fields
+    if (!dog.name || !dog.name.trim()) {
+      setError("Dog name is required");
+      return;
+    }
+    
     setSaving(true);
     
     try {
       const payload = {
-        name: dog.name,
+        name: dog.name.trim(),
         age: Number(dog.age) || undefined,
-        breed: dog.breed,
-        gender: dog.gender,
-        energy: dog.energy,
+        breed: dog.breed || undefined,
+        gender: dog.gender || undefined,
+        energy: dog.energy || undefined,
         temperament: dog.temperament
-          ? dog.temperament.split(",").map(t => t.trim())
+          ? dog.temperament.split(",").map(t => t.trim()).filter(t => t)
           : [],
         vaccinated: dog.vaccinated,
         images: dog.imageUrl ? [dog.imageUrl] : [],
-        city: dog.city,
-        zip: dog.zip
+        city: dog.city || undefined,
+        zip: dog.zip || undefined
       };
 
+      console.log("Saving dog with payload:", payload);
       const res = await api.post("/dogs/create", payload);
+      console.log("Dog created successfully:", res.data);
+      
       onDogCreated(res.data);
+      
+      // Reset form
       setDog({
         name: "",
         age: "",
@@ -293,9 +310,18 @@ function AddDog({ token, onDogCreated }) {
         imageUrl: ""
       });
       setImagePreview("");
+      setError("");
+      setSuccess(`✅ ${res.data.name} added successfully!`);
+      
+      // Clear file input
+      const fileInput = document.getElementById('dog-photo');
+      if (fileInput) fileInput.value = '';
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Error creating dog:", err);
-      setError("Failed to create dog profile. Please check your connection and try again.");
+      setError(err.response?.data?.message || "Failed to create dog profile. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -307,6 +333,19 @@ function AddDog({ token, onDogCreated }) {
         <h2>Add a dog</h2>
         <p>Tell us about your pup so we can find the perfect playmates.</p>
       </div>
+      {success && (
+        <div style={{ 
+          background: '#d4edda', 
+          border: '2px solid #28a745', 
+          padding: '12px', 
+          borderRadius: '8px', 
+          marginBottom: '12px',
+          color: '#155724',
+          fontWeight: '600'
+        }}>
+          {success}
+        </div>
+      )}
       {error && (
         <div style={{ 
           background: '#fee', 
