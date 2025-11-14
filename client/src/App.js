@@ -866,7 +866,6 @@ function Community({ activeDogId }) {
   const [toast, setToast] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     async function fetchAllDogs() {
@@ -884,7 +883,7 @@ function Community({ activeDogId }) {
       }
     }
     fetchAllDogs();
-  }, [refreshTrigger]);
+  }, []);
 
   function handlePostCreated(newPost) {
     setAllDogs(prev => [newPost, ...prev]);
