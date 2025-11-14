@@ -223,10 +223,38 @@ function AddDog({ token, onDogCreated }) {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [imagePreview, setImagePreview] = useState("");
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
     setDog(prev => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  }
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select an image file');
+        return;
+      }
+      
+      // Check file size (5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image size must be less than 5MB');
+        return;
+      }
+      
+      // Create a data URL for preview and storage
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUrl = reader.result;
+        setImagePreview(dataUrl);
+        setDog(prev => ({ ...prev, imageUrl: dataUrl }));
+        setError("");
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   async function handleSave(e) {
@@ -264,6 +292,7 @@ function AddDog({ token, onDogCreated }) {
         zip: "",
         imageUrl: ""
       });
+      setImagePreview("");
     } catch (err) {
       console.error("Error creating dog:", err);
       setError("Failed to create dog profile. Please check your connection and try again.");
@@ -413,17 +442,55 @@ function AddDog({ token, onDogCreated }) {
           </label>
         </div>
 
-        <label className="auth-label">
-          Image URL (optional)
-          <input
-            type="url"
-            className="auth-input"
-            name="imageUrl"
-            value={dog.imageUrl}
-            onChange={handleChange}
-            placeholder="https://example.com/dog.jpg"
-          />
-        </label>
+        <div className="image-upload-section">
+          <label className="auth-label">
+            Upload Photo
+            <div className="file-upload-wrapper">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="file-input"
+                id="dog-photo"
+              />
+              <label htmlFor="dog-photo" className="file-upload-btn">
+                📷 Choose from Device
+              </label>
+            </div>
+          </label>
+
+          <div className="upload-divider">
+            <span>or</span>
+          </div>
+
+          <label className="auth-label">
+            Image URL
+            <input
+              type="url"
+              className="auth-input"
+              name="imageUrl"
+              value={dog.imageUrl}
+              onChange={handleChange}
+              placeholder="https://example.com/dog.jpg"
+            />
+          </label>
+
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="Preview" />
+              <button
+                type="button"
+                className="remove-preview"
+                onClick={() => {
+                  setImagePreview("");
+                  setDog(prev => ({ ...prev, imageUrl: "" }));
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
 
         <button type="submit" className="btn btn-secondary full-width" disabled={saving}>
           {saving ? "Saving..." : "Save dog"}
