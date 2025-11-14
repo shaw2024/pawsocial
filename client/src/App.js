@@ -697,6 +697,7 @@ function CreatePost({ onPostCreated }) {
   const [imagePreview, setImagePreview] = useState("");
   const [posting, setPosting] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   function handleFileChange(e) {
     const file = e.target.files[0];
@@ -721,35 +722,55 @@ function CreatePost({ onPostCreated }) {
       reader.readAsDataURL(file);
     }
   }
+  
+  function handleUrlChange(e) {
+    const url = e.target.value;
+    setPost(prev => ({ ...prev, imageUrl: url }));
+    if (url) {
+      setImagePreview(url);
+    }
+  }
 
   async function handlePost(e) {
     e.preventDefault();
-    if (!post.imageUrl) {
-      setError("Please select an image to post");
+    
+    if (!post.imageUrl || !post.imageUrl.trim()) {
+      setError("Please upload a photo or enter an image URL");
       return;
     }
     
     setPosting(true);
     setError("");
+    setSuccess("");
     
     try {
       // Create a post as a dog entry
       const payload = {
-        name: post.caption || "Community Post",
+        name: post.caption?.trim() || "Community Post",
         breed: "Community Share",
         images: [post.imageUrl],
         temperament: ["community-post"]
       };
       
+      console.log("Creating post with payload:", payload);
       const res = await api.post("/dogs/create", payload);
+      console.log("Post created successfully:", res.data);
+      
       onPostCreated(res.data);
       
       // Reset form
       setPost({ caption: "", imageUrl: "" });
       setImagePreview("");
+      
+      // Clear file input
+      const fileInput = document.getElementById('post-photo');
+      if (fileInput) fileInput.value = '';
+      
+      setSuccess("✅ Posted to community successfully!");
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Error creating post:", err);
-      setError("Failed to post. Please try again.");
+      setError(err.response?.data?.message || "Failed to post. Please try again.");
     } finally {
       setPosting(false);
     }
@@ -804,7 +825,7 @@ function CreatePost({ onPostCreated }) {
               type="url"
               className="auth-input"
               value={post.imageUrl}
-              onChange={(e) => setPost(prev => ({ ...prev, imageUrl: e.target.value }))}
+              onChange={handleUrlChange}
               placeholder="https://example.com/photo.jpg"
             />
           </label>
@@ -825,6 +846,12 @@ function CreatePost({ onPostCreated }) {
             </div>
           )}
         </div>
+
+        {success && (
+          <div className="success-message">
+            ✓ {success}
+          </div>
+        )}
 
         <button type="submit" className="btn btn-primary full-width" disabled={posting}>
           {posting ? "Posting..." : "📤 Post to Community"}
