@@ -794,6 +794,17 @@ function App() {
         </div>
       </header>
 
+      <div className="construction-banner">
+        <div className="construction-content">
+          <span className="construction-icon">🚧</span>
+          <h2 className="construction-title">Under Construction</h2>
+          <p className="construction-message">
+            We're working hard to bring you the best dog matching experience! 
+            This demo showcases the frontend design. Full functionality coming soon.
+          </p>
+        </div>
+      </div>
+
       <main className="dashboard">
         <section className="dashboard-left">
           <AddDog token={token} onDogCreated={handleDogCreated} />

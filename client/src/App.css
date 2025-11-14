@@ -48,14 +48,72 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 28px;
-  border-bottom: 2px solid var(--border-subtle);
+  padding-inline: 32px;
+  padding-block: 20px;
   background: linear-gradient(135deg, #8b7355 0%, #6b5545 100%);
-  box-shadow: 0 2px 12px rgba(107, 85, 69, 0.15);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
+/* Construction Banner */
+
+.construction-banner {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border-bottom: 3px solid #f4c430;
+  padding: 24px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.construction-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.construction-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.construction-title {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d2520;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.construction-message {
+  margin: 0;
+  font-size: 16px;
+  color: #4a4035;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+/* Topbar left/right sections */
 
 .topbar-left {
   display: flex;

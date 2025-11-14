@@ -2,6 +2,8 @@
 
 A full-stack dog matching application where dogs find playmates, buddies, and maybe even a soulmate. Connect with local dog owners and set up safe, fun meetups.
 
+🌐 **Live Demo:** [https://shaw2024.github.io/pawsocial](https://shaw2024.github.io/pawsocial)
+
 ![PawSocial Banner](https://img.shields.io/badge/Dog-Matching-8b7355?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-18.3.1-61dafb?style=for-the-badge&logo=react)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js)
