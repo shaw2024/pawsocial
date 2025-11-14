@@ -12,7 +12,11 @@ import matchRoutes from "./routes/match.js";
 const app = express();
 
 app.use(cors({
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+  origin: [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://shaw2024.github.io"
+  ],
   credentials: true
 }));
 app.use(express.json());
@@ -49,9 +53,9 @@ const PORT = process.env.PORT || 4000;
 // Start MongoDB Memory Server for development
 async function startServer() {
   try {
-    let mongoUrl = process.env.MONGO_URL;
+    let mongoUrl = process.env.MONGODB_URI || process.env.MONGO_URL;
     
-    // If using placeholder, start in-memory MongoDB
+    // If using placeholder or not set, start in-memory MongoDB
     if (!mongoUrl || mongoUrl.includes("YOUR_MONGODB") || mongoUrl.includes("localhost")) {
       console.log("🚀 Starting in-memory MongoDB for development...");
       const mongod = await MongoMemoryServer.create();
