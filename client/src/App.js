@@ -18,11 +18,28 @@ function Login({ onLogin, switchToRegister }) {
     }
   }
 
+  function handleQuickAccess() {
+    // Bypass authentication and go directly to dashboard
+    onLogin("demo-token", { name: "Demo User", email: "demo@pawsocial.com" });
+  }
+
   return (
     <div className="auth-card">
       <h2 className="auth-title">Welcome back 🐾</h2>
       <p className="auth-subtitle">Sign in to find new friends for your pup.</p>
       {error && <p className="auth-error">{error}</p>}
+
+      <button 
+        type="button" 
+        className="btn btn-primary full-width quick-access-btn"
+        onClick={handleQuickAccess}
+      >
+        🚀 Quick Access (No Login Required)
+      </button>
+
+      <div className="divider">
+        <span>or sign in with credentials</span>
+      </div>
 
       <form onSubmit={handleLogin} className="auth-form">
         <label className="auth-label">
@@ -47,8 +64,8 @@ function Login({ onLogin, switchToRegister }) {
           />
         </label>
 
-        <button type="submit" className="btn btn-primary full-width">
-          Log in
+        <button type="submit" className="btn btn-outline full-width">
+          Log in with credentials
         </button>
       </form>
 
@@ -697,9 +714,9 @@ function Community({ activeDogId }) {
 }
 
 function App() {
-  const [view, setView] = useState("dashboard"); // "login" | "register" | "dashboard"
-  const [token, setToken] = useState("bypass-token");
-  const [user, setUser] = useState({ name: "Demo User", email: "demo@pawsocial.com" });
+  const [view, setView] = useState("login"); // "login" | "register" | "dashboard"
+  const [token, setToken] = useState("");
+  const [user, setUser] = useState(null);
   const [myDogs, setMyDogs] = useState([]);
   const [activeDogId, setActiveDogId] = useState("");
 

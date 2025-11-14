@@ -332,6 +332,44 @@ select.auth-input {
   font-size: 0.85rem;
 }
 
+/* Quick Access Button */
+
+.quick-access-btn {
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+}
+
+.quick-access-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* Divider */
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.divider span {
+  padding: 0 12px;
+}
+
 /* Buttons */
 
 .btn {
@@ -754,6 +792,35 @@ select.auth-input {
 @media (max-width: 640px) {
   .topbar {
     padding-inline: 18px;
+    padding-block: 16px;
+  }
+
+  .topbar-left {
+    gap: 12px;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .topbar-user {
+    display: none;
+  }
+
+  .construction-banner {
+    padding: 20px 16px;
+  }
+
+  .construction-icon {
+    font-size: 36px;
+  }
+
+  .construction-title {
+    font-size: 22px;
+  }
+
+  .construction-message {
+    font-size: 14px;
   }
 
   .dashboard {
@@ -762,5 +829,60 @@ select.auth-input {
 
   .form-row {
     flex-direction: column;
+  }
+
+  .auth-main {
+    padding: 24px 16px;
+  }
+
+  .auth-card {
+    padding: 28px 20px;
+    max-width: 100%;
+  }
+
+  .auth-title {
+    font-size: 1.3rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.88rem;
+  }
+
+  .quick-access-btn {
+    font-size: 0.95rem;
+    padding: 14px 18px;
+  }
+
+  .auth-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    padding: 20px 16px;
+  }
+
+  .panel-header h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .topbar-right {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .construction-title {
+    font-size: 20px;
+  }
+
+  .construction-message {
+    font-size: 13px;
   }
 }
