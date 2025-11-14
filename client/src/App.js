@@ -712,6 +712,7 @@ function Community({ activeDogId }) {
 
 function App() {
   const [view, setView] = useState("login"); // "login" | "register" | "dashboard"
+  const [currentTab, setCurrentTab] = useState("personal"); // "personal" | "community"
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
   const [myDogs, setMyDogs] = useState([]);
@@ -791,9 +792,17 @@ function App() {
           <nav className="topbar-nav">
             <button
               type="button"
-              className="topbar-link topbar-link-active"
+              className={`topbar-link ${currentTab === 'personal' ? 'topbar-link-active' : ''}`}
+              onClick={() => setCurrentTab('personal')}
             >
-              Dashboard
+              My Page
+            </button>
+            <button
+              type="button"
+              className={`topbar-link ${currentTab === 'community' ? 'topbar-link-active' : ''}`}
+              onClick={() => setCurrentTab('community')}
+            >
+              Community
             </button>
           </nav>
         </div>
@@ -825,56 +834,104 @@ function App() {
       </div>
 
       <main className="dashboard">
-        <section className="dashboard-left">
-          <AddDog token={token} onDogCreated={handleDogCreated} />
+        {currentTab === 'personal' ? (
+          <>
+            <section className="dashboard-left">
+              <AddDog token={token} onDogCreated={handleDogCreated} />
 
-          <div className="panel small-panel">
-            <div className="panel-header">
-              <h2>My dogs</h2>
-              <p>Select a dog to use for matching.</p>
-            </div>
-            {myDogs.length === 0 && (
-              <p className="empty-state">
-                You haven't added any dogs yet. Add your first pup above.
-              </p>
-            )}
-            <div className="dog-list">
-              {myDogs.map(d => (
-                <label key={d._id} className="dog-radio">
-                  <input
-                    type="radio"
-                    value={d._id}
-                    checked={activeDogId === d._id}
-                    onChange={() => setActiveDogId(d._id)}
-                  />
-                  <div className="dog-radio-body">
-                    <span className="dog-radio-name">{d.name}</span>
-                    <span className="dog-radio-sub">
-                      {d.breed || "Unknown breed"}
-                    </span>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="dashboard-right">
-          <Community activeDogId={activeDogId} />
-          {activeDogId ? (
-            <>
-              <Discover token={token} activeDogId={activeDogId} />
-              <Matches activeDogId={activeDogId} />
-            </>
-          ) : (
-            <div className="panel">
-              <div className="panel-header">
-                <h2>No active dog selected</h2>
-                <p>Add a dog and select it from the list to start discovering matches.</p>
+              <div className="panel small-panel">
+                <div className="panel-header">
+                  <h2>My dogs</h2>
+                  <p>Select a dog to use for matching.</p>
+                </div>
+                {myDogs.length === 0 && (
+                  <p className="empty-state">
+                    You haven't added any dogs yet. Add your first pup above.
+                  </p>
+                )}
+                <div className="dog-list">
+                  {myDogs.map(d => (
+                    <label key={d._id} className="dog-radio">
+                      <input
+                        type="radio"
+                        value={d._id}
+                        checked={activeDogId === d._id}
+                        onChange={() => setActiveDogId(d._id)}
+                      />
+                      <div className="dog-radio-body">
+                        <span className="dog-radio-name">{d.name}</span>
+                        <span className="dog-radio-sub">
+                          {d.breed || "Unknown breed"}
+                        </span>
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </section>
+            </section>
+
+            <section className="dashboard-right">
+              <div className="panel">
+                <div className="panel-header">
+                  <h2>My Dogs Gallery</h2>
+                  <p>All your uploaded dogs in one place</p>
+                </div>
+                {myDogs.length === 0 ? (
+                  <p className="empty-state">
+                    No dogs yet. Upload your first pup using the form!
+                  </p>
+                ) : (
+                  <div className="dog-gallery">
+                    {myDogs.map(dog => (
+                      <div key={dog._id} className="dog-card">
+                        {dog.images && dog.images[0] && (
+                          <img
+                            src={dog.images[0]}
+                            alt={dog.name}
+                            className="dog-card-img"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/300x200/8b7355/ffffff?text=🐕';
+                            }}
+                          />
+                        )}
+                        {(!dog.images || !dog.images[0]) && (
+                          <div className="dog-card-placeholder">🐕</div>
+                        )}
+                        <div className="dog-card-body">
+                          <h3 className="dog-card-name">{dog.name}</h3>
+                          <p className="dog-card-breed">{dog.breed || 'Mixed breed'}</p>
+                          <div className="dog-card-tags">
+                            {dog.age && <span className="dog-tag">{dog.age} years</span>}
+                            {dog.gender && <span className="dog-tag">{dog.gender}</span>}
+                            {dog.energy && <span className="dog-tag">{dog.energy} energy</span>}
+                          </div>
+                          {dog.temperament && dog.temperament.length > 0 && (
+                            <div className="dog-card-traits">
+                              {dog.temperament.slice(0, 3).map((trait, i) => (
+                                <span key={i} className="trait-badge">{trait}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              
+              {activeDogId && (
+                <>
+                  <Discover token={token} activeDogId={activeDogId} />
+                  <Matches activeDogId={activeDogId} />
+                </>
+              )}
+            </section>
+          </>
+        ) : (
+          <section className="community-full">
+            <Community activeDogId={activeDogId} />
+          </section>
+        )}
       </main>
     </div>
   );
