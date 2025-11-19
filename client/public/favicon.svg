@@ -1,95 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <defs>
-    <style>
-      @keyframes wag {
-        0%, 100% { transform: rotate(-10deg); }
-        50% { transform: rotate(10deg); }
-      }
-      @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-3px); }
-      }
-      @keyframes heartbeat {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-      }
-      .tail-left { 
-        transform-origin: 30% 50%;
-        animation: wag 0.6s ease-in-out infinite;
-      }
-      .tail-right {
-        transform-origin: 70% 50%;
-        animation: wag 0.6s ease-in-out infinite 0.3s;
-      }
-      .dog-body {
-        animation: bounce 1.2s ease-in-out infinite;
-      }
-      .heart {
-        animation: heartbeat 1s ease-in-out infinite;
-        transform-origin: center;
-      }
-    </style>
-  </defs>
-  
   <!-- Background circle -->
   <circle cx="50" cy="50" r="50" fill="#8b7355"/>
   
-  <!-- Left Dog (animated) -->
-  <g class="dog-body" transform="translate(25, 35)">
-    <!-- Head -->
-    <circle cx="0" cy="0" r="12" fill="#6b5545"/>
-    <!-- Ears -->
-    <ellipse cx="-8" cy="-8" rx="5" ry="8" fill="#5a4635"/>
-    <ellipse cx="8" cy="-8" rx="5" ry="8" fill="#5a4635"/>
-    <!-- Eyes (happy) -->
-    <circle cx="-4" cy="-2" r="2.5" fill="#2d2520"/>
-    <circle cx="-3.5" cy="-2.5" r="0.8" fill="#fff"/>
-    <circle cx="4" cy="-2" r="2.5" fill="#2d2520"/>
-    <circle cx="4.5" cy="-2.5" r="0.8" fill="#fff"/>
-    <!-- Nose -->
-    <circle cx="0" cy="3" r="2.5" fill="#2d2520"/>
-    <!-- Smile -->
-    <path d="M -3 5 Q 0 7 3 5" stroke="#2d2520" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <!-- Body -->
-    <ellipse cx="0" cy="18" rx="10" ry="14" fill="#6b5545"/>
-    <!-- Legs -->
-    <rect x="-8" y="25" width="4" height="8" rx="2" fill="#5a4635"/>
-    <rect x="4" y="25" width="4" height="8" rx="2" fill="#5a4635"/>
-    <!-- Tail (animated) -->
-    <g class="tail-left">
-      <path d="M -10 15 Q -18 12 -16 8" stroke="#5a4635" stroke-width="3" fill="none" stroke-linecap="round"/>
-    </g>
+  <!-- Large centered paw print -->
+  <g transform="translate(50, 50)">
+    <!-- Main pad -->
+    <ellipse cx="0" cy="5" rx="12" ry="15" fill="#faf8f3"/>
+    
+    <!-- Toe pads -->
+    <ellipse cx="-8" cy="-8" rx="5" ry="7" fill="#faf8f3" transform="rotate(-15 -8 -8)"/>
+    <ellipse cx="-2" cy="-12" rx="5" ry="7" fill="#faf8f3" transform="rotate(-5 -2 -12)"/>
+    <ellipse cx="5" cy="-12" rx="5" ry="7" fill="#faf8f3" transform="rotate(5 5 -12)"/>
+    <ellipse cx="10" cy="-7" rx="5" ry="7" fill="#faf8f3" transform="rotate(15 10 -7)"/>
   </g>
   
-  <!-- Right Dog (animated) -->
-  <g class="dog-body" transform="translate(75, 35)" style="animation-delay: 0.6s">
-    <!-- Head -->
-    <circle cx="0" cy="0" r="12" fill="#d4a574"/>
-    <!-- Ears -->
-    <ellipse cx="-8" cy="-8" rx="5" ry="8" fill="#c9956f"/>
-    <ellipse cx="8" cy="-8" rx="5" ry="8" fill="#c9956f"/>
-    <!-- Eyes (happy) -->
-    <circle cx="-4" cy="-2" r="2.5" fill="#2d2520"/>
-    <circle cx="-3.5" cy="-2.5" r="0.8" fill="#fff"/>
-    <circle cx="4" cy="-2" r="2.5" fill="#2d2520"/>
-    <circle cx="4.5" cy="-2.5" r="0.8" fill="#fff"/>
-    <!-- Nose -->
-    <circle cx="0" cy="3" r="2.5" fill="#2d2520"/>
-    <!-- Smile -->
-    <path d="M -3 5 Q 0 7 3 5" stroke="#2d2520" stroke-width="1" fill="none" stroke-linecap="round"/>
-    <!-- Body -->
-    <ellipse cx="0" cy="18" rx="10" ry="14" fill="#d4a574"/>
-    <!-- Legs -->
-    <rect x="-8" y="25" width="4" height="8" rx="2" fill="#c9956f"/>
-    <rect x="4" y="25" width="4" height="8" rx="2" fill="#c9956f"/>
-    <!-- Tail (animated) -->
-    <g class="tail-right">
-      <path d="M 10 15 Q 18 12 16 8" stroke="#c9956f" stroke-width="3" fill="none" stroke-linecap="round"/>
-    </g>
-  </g>
-  
-  <!-- Animated Heart between dogs -->
-  <g class="heart">
-    <path d="M 50 45 L 53 42 Q 56 39 56 36 Q 56 33 54 31 Q 52 29 50 31 Q 48 29 46 31 Q 44 33 44 36 Q 44 39 47 42 Z" fill="#ff6b8a"/>
+  <!-- Small decorative paw prints -->
+  <g opacity="0.5" fill="#faf8f3">
+    <!-- Top left paw -->
+    <ellipse cx="20" cy="25" rx="4" ry="5"/>
+    <ellipse cx="16" cy="20" rx="2" ry="3" transform="rotate(-20 16 20)"/>
+    <ellipse cx="20" cy="18" rx="2" ry="3"/>
+    <ellipse cx="24" cy="20" rx="2" ry="3" transform="rotate(20 24 20)"/>
+    
+    <!-- Bottom right paw -->
+    <ellipse cx="80" cy="75" rx="4" ry="5"/>
+    <ellipse cx="76" cy="70" rx="2" ry="3" transform="rotate(-20 76 70)"/>
+    <ellipse cx="80" cy="68" rx="2" ry="3"/>
+    <ellipse cx="84" cy="70" rx="2" ry="3" transform="rotate(20 84 70)"/>
   </g>
 </svg>
