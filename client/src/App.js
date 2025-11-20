@@ -1038,7 +1038,7 @@ function App() {
     return (
       <div className="app-shell auth-shell">
         <div className="auth-mobile-header">
-          <h1 className="auth-mobile-logo">PawPawSocial</h1>
+          <h1 className="auth-mobile-logo">🐾 PawPawSocial</h1>
           <p className="auth-mobile-tagline">Find pawfect friends for your pup</p>
         </div>
         
