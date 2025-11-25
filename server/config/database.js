@@ -1,30 +1,18 @@
-import { Sequelize } from 'sequelize';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const DATABASE_URL = process.env.DATABASE_URL || process.env.POSTGRESQL_URL;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://atlas-sql-690e67c070608c2503b1e195-bpijjp.a.query.mongodb.net/sample_mflix?ssl=true&authSource=admin';
 
-if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL is not defined');
-  process.exit(1);
-}
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('✅ MongoDB Atlas connected'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
 
-const sequelize = new Sequelize(DATABASE_URL, {
-  dialect: 'postgres',
-  logging: false,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  },
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
-  }
-});
-
-export default sequelize;
+export default mongoose;

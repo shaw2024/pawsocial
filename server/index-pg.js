@@ -66,9 +66,8 @@ app.post("/auth/login", async (req, res) => {
 app.post("/dogs/create", async (req, res) => {
   try {
     const { name, age, breed, gender, energy, temperament, vaccinated, images, city, zip } = req.body;
-    
-    const dog = await Dog.create({
-      ownerId: 1, // Default owner
+    const dog = new Dog({
+      ownerId: 1,
       name,
       age,
       breed,
@@ -80,7 +79,7 @@ app.post("/dogs/create", async (req, res) => {
       city,
       zip
     });
-    
+    await dog.save();
     res.status(201).json(dog);
   } catch (error) {
     console.error("Create dog error:", error);
@@ -102,10 +101,7 @@ app.get("/dogs/all", async (req, res) => {
 
 app.get("/dogs/mine", async (req, res) => {
   try {
-    const dogs = await Dog.findAll({
-      where: { ownerId: 1 }, // Default owner
-      order: [['createdAt', 'DESC']]
-    });
+    const dogs = await Dog.find({ ownerId: 1 }).sort({ createdAt: -1 });
     res.json(dogs);
   } catch (error) {
     console.error("Get my dogs error:", error);
