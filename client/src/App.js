@@ -945,89 +945,38 @@ function Community({ activeDogId }) {
     <>
       <CreatePost onPostCreated={handlePostCreated} />
       
-      <div className="panel">
-        <div className="panel-header">
-          <h2>Community Stream</h2>
-          <p>Browse all dogs in the community</p>
-        </div>
-
-      {loading ? (
-        <p className="empty-state">Loading community dogs...</p>
-      ) : error ? (
-        <div className="empty-state">
-          <p style={{ color: '#d9534f' }}>{error}</p>
-          <button 
-            className="btn btn-secondary" 
-            onClick={() => window.location.reload()}
-            style={{ marginTop: '10px' }}
-          >
-            Retry
-          </button>
-        </div>
-      ) : allDogs.length === 0 ? (
-        <p className="empty-state">No dogs in the community yet. Be the first to add one!</p>
-      ) : (
-        <div className="community-grid">
-          {allDogs.map(dog => (
-            <div key={dog._id} className="community-card">
-              {dog.images?.[0] && (
-                <div className="community-card-image">
-                  <img src={dog.images[0]} alt={dog.name} />
-                </div>
-              )}
-              <div className="community-card-content">
-                <h3>{dog.name}</h3>
-                <p className="dog-breed">{dog.breed || "Unknown breed"}</p>
-                <div className="community-meta">
-                  <span>⚡ {dog.energy || "n/a"}</span>
-                  {dog.location?.city && <span>📍 {dog.location.city}</span>}
-                </div>
-                {dog.temperament?.length > 0 && (
-                  <div className="community-tags">
-                    {dog.temperament.slice(0, 3).map(tag => (
-                      <span key={tag} className="dog-tag">{tag}</span>
-                    ))}
-                  </div>
-                )}
-                <div className="community-actions">
-                  <button
-                    className="btn btn-like"
-                    onClick={() => handleLike(dog._id)}
-                    disabled={dog._id === activeDogId}
-                  >
-                    ❤️ Like
-                  </button>
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => handleShare(dog)}
-                  >
-                    📤 Share
-                  </button>
-                </div>
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+          <form onSubmit={handlePost} style={{ background: '#fff', padding: '32px', borderRadius: '16px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
+            <h2 style={{ marginBottom: '16px' }}>Share with the Community</h2>
+            {error && <div style={{ color: '#d9534f', marginBottom: '12px' }}>{error}</div>}
+            <input
+              type="text"
+              value={post.caption}
+              onChange={e => setPost(prev => ({ ...prev, caption: e.target.value }))}
+              placeholder="What's on your mind? (optional)"
+              maxLength="200"
+              style={{ width: '100%', marginBottom: '16px', padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ marginBottom: '16px' }}
+            />
+            {imagePreview && (
+              <div style={{ marginBottom: '16px' }}>
+                <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', borderRadius: '8px' }} />
+                <button type="button" style={{ marginTop: '8px', background: 'none', border: 'none', color: '#d9534f', cursor: 'pointer' }} onClick={() => { setImagePreview(""); setPost(prev => ({ ...prev, imageUrl: "" })); }}>Remove</button>
               </div>
-            </div>
-          ))}
+            )}
+            {success && <div style={{ color: '#28a745', marginBottom: '12px' }}>✓ {success}</div>}
+            <button type="submit" style={{ width: '100%', padding: '12px', borderRadius: '8px', background: '#007bff', color: '#fff', fontWeight: 'bold', border: 'none', cursor: 'pointer' }} disabled={posting}>
+              {posting ? "Posting..." : "📤 Post"}
+            </button>
+          </form>
         </div>
-      )}      {toast && <div className="toast">{toast}</div>}
-      </div>
-    </>
-  );
-}
-
-function App() {
-  const [view, setView] = useState("login"); // "login" | "register" | "dashboard"
-  const [currentTab, setCurrentTab] = useState("personal"); // "personal" | "community"
-  const [token, setToken] = useState("");
-  const [user, setUser] = useState(null);
-  const [myDogs, setMyDogs] = useState([]);
-  const [activeDogId, setActiveDogId] = useState("");
-
-  useEffect(() => {
-    async function fetchDogs() {
-      try {
-        const res = await api.get("/dogs/mine");
-        setMyDogs(res.data || []);
-        if (res.data && res.data[0]) {
+      );
           setActiveDogId(res.data[0]._id);
         }
       } catch (err) {
