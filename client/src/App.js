@@ -253,7 +253,12 @@ function AddDog({ token, onDogCreated }) {
       // Create a data URL for preview and storage
       const reader = new FileReader();
       reader.onloadend = () => {
-        const dataUrl = reader.result;
+        let dataUrl = reader.result;
+        // Ensure prefix is present
+        if (file && !dataUrl.startsWith('data:')) {
+          const mime = file.type || 'image/png';
+          dataUrl = `data:${mime};base64,${btoa(dataUrl)}`;
+        }
         setImagePreview(dataUrl);
         setDog(prev => ({ ...prev, imageUrl: dataUrl }));
         setError("");
@@ -347,17 +352,28 @@ function AddDog({ token, onDogCreated }) {
         </div>
       )}
       {error && (
-        <div style={{ 
-          background: '#fee', 
-          border: '2px solid #d9534f', 
-          padding: '12px', 
-          borderRadius: '8px', 
-          marginBottom: '12px',
-          color: '#d9534f'
-        }}>
-          {error}
-        </div>
-      )}
+          <div style={{ 
+            background: '#d4edda', 
+            border: '2px solid #28a745', 
+            padding: '12px', 
+            borderRadius: '8px', 
+            marginBottom: '12px',
+            color: '#155724',
+            fontWeight: '600',
+            position: 'relative'
+          }}>
+            {success}
+            <button style={{
+              position: 'absolute',
+              top: 6,
+              right: 10,
+              background: 'none',
+              border: 'none',
+              color: '#155724',
+              fontSize: '18px',
+              cursor: 'pointer'
+            }} onClick={() => setSuccess("")}>✕</button>
+          </div>
       <form onSubmit={handleSave} className="panel-form">
         <div className="form-row">
           <label className="auth-label">
@@ -1029,8 +1045,19 @@ function App() {
   }
 
   function handleDogCreated(dog) {
-    setMyDogs(prev => [...prev, dog]);
-    if (!activeDogId) setActiveDogId(dog._id);
+    // After creating a dog, fetch the latest list from backend
+    async function refreshDogs() {
+      try {
+        const res = await api.get("/dogs/mine");
+        setMyDogs(res.data || []);
+        if (res.data && res.data[0]) {
+          setActiveDogId(res.data[0]._id);
+        }
+      } catch (err) {
+        console.error("Error refreshing my dogs:", err);
+      }
+    }
+    refreshDogs();
   }
 
   // Auth layout (login/register)
