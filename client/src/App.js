@@ -946,33 +946,34 @@ function Community({ activeDogId }) {
       <CreatePost onPostCreated={handlePostCreated} />
       
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-          <form onSubmit={handlePost} style={{ background: '#fff', padding: '32px', borderRadius: '16px', boxShadow: '0 2px 16px rgba(0,0,0,0.08)', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-            <h2 style={{ marginBottom: '16px' }}>Share with the Community</h2>
-            {error && <div style={{ color: '#d9534f', marginBottom: '12px' }}>{error}</div>}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', minHeight: '40vh', paddingTop: '40px' }}>
+          <form onSubmit={handlePost} style={{ background: '#f8f9fa', padding: '16px', borderRadius: '10px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', width: '100%', maxWidth: '260px', textAlign: 'center', border: '1px solid #e0e0e0' }}>
+            <h4 style={{ marginBottom: '10px', fontWeight: '600', color: '#333' }}>Create Dog Post</h4>
+            {error && <div style={{ color: '#d9534f', marginBottom: '8px', fontSize: '13px' }}>{error}</div>}
             <input
               type="text"
               value={post.caption}
               onChange={e => setPost(prev => ({ ...prev, caption: e.target.value }))}
-              placeholder="What's on your mind? (optional)"
-              maxLength="200"
-              style={{ width: '100%', marginBottom: '16px', padding: '8px', borderRadius: '8px', border: '1px solid #ccc' }}
+              placeholder="Caption (optional)"
+              maxLength="100"
+              style={{ width: '100%', marginBottom: '8px', padding: '6px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '13px' }}
             />
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              style={{ marginBottom: '16px' }}
+              style={{ marginBottom: '8px', fontSize: '13px' }}
             />
             {imagePreview && (
-              <div style={{ marginBottom: '16px' }}>
-                <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', borderRadius: '8px' }} />
-                <button type="button" style={{ marginTop: '8px', background: 'none', border: 'none', color: '#d9534f', cursor: 'pointer' }} onClick={() => { setImagePreview(""); setPost(prev => ({ ...prev, imageUrl: "" })); }}>Remove</button>
-              </div>
+              <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', borderRadius: '6px', marginBottom: '8px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }} />
             )}
-            {success && <div style={{ color: '#28a745', marginBottom: '12px' }}>✓ {success}</div>}
-            <button type="submit" style={{ width: '100%', padding: '12px', borderRadius: '8px', background: '#007bff', color: '#fff', fontWeight: 'bold', border: 'none', cursor: 'pointer' }} disabled={posting}>
-              {posting ? "Posting..." : "📤 Post"}
+            {success && <div style={{ color: '#28a745', marginBottom: '8px', fontSize: '13px' }}>✓ {success}</div>}
+            <button
+              type="submit"
+              style={{ width: '100%', padding: '8px', borderRadius: '6px', background: '#007bff', color: '#fff', fontWeight: 'bold', border: 'none', cursor: 'pointer', fontSize: '14px' }}
+              disabled={posting}
+            >
+              {posting ? "Posting..." : "Post"}
             </button>
           </form>
         </div>

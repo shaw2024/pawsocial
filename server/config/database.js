@@ -3,9 +3,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://atlas-sql-690e67c070608c2503b1e195-bpijjp.a.query.mongodb.net/sample_mflix?ssl=true&authSource=admin';
 
-mongoose.connect(MONGODB_URI, {
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://atlas-sql-690e67c070608c2503b1e195-bpijjp.a.query.mongodb.net/sample_mflix?ssl=true&authSource=admin';
+
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

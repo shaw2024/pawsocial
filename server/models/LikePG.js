@@ -1,23 +1,9 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import mongoose from '../config/database.js';
 
-const Like = sequelize.define('Like', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  dogId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  targetDogId: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  }
-}, {
-  tableName: 'likes',
-  timestamps: true
-});
+const LikeSchema = new mongoose.Schema({
+  dogId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  targetDogId: { type: mongoose.Schema.Types.ObjectId, required: true }
+}, { timestamps: true });
 
+const Like = mongoose.model('Like', LikeSchema);
 export default Like;

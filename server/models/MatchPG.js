@@ -1,23 +1,9 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import mongoose from '../config/database.js';
 
-const Match = sequelize.define('Match', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  dog1Id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  dog2Id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  }
-}, {
-  tableName: 'matches',
-  timestamps: true
-});
+const MatchSchema = new mongoose.Schema({
+  dog1Id: { type: mongoose.Schema.Types.ObjectId, required: true },
+  dog2Id: { type: mongoose.Schema.Types.ObjectId, required: true }
+}, { timestamps: true });
 
+const Match = mongoose.model('Match', MatchSchema);
 export default Match;

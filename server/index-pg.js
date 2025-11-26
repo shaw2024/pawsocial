@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import sequelize from "./config/database.js";
+import mongoose from "./config/database.js";
+dotenv.config();
 import User from "./models/UserPG.js";
 import Dog from "./models/DogPG.js";
 import Like from "./models/LikePG.js";
@@ -29,11 +30,11 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("PawPawSocial API is running with PostgreSQL");
+  res.send("PawPawSocial API is running with MongoDB Atlas");
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", database: "postgresql", timestamp: new Date() });
+  res.json({ status: "ok", database: "mongodb", timestamp: new Date() });
 });
 
 // Auth routes
@@ -65,20 +66,7 @@ app.post("/auth/login", async (req, res) => {
 // Dog routes
 app.post("/dogs/create", async (req, res) => {
   try {
-    const { name, age, breed, gender, energy, temperament, vaccinated, images, city, zip } = req.body;
-    const dog = new Dog({
-      ownerId: 1,
-      name,
-      age,
-      breed,
-      gender,
-      energy,
-      temperament: temperament || [],
-      vaccinated: vaccinated || false,
-      images: images || [],
-      city,
-      zip
-    });
+    const dog = new Dog(req.body);
     await dog.save();
     res.status(201).json(dog);
   } catch (error) {
@@ -89,9 +77,7 @@ app.post("/dogs/create", async (req, res) => {
 
 app.get("/dogs/all", async (req, res) => {
   try {
-    const dogs = await Dog.findAll({
-      order: [['createdAt', 'DESC']]
-    });
+    const dogs = await Dog.find({}).sort({ createdAt: -1 });
     res.json(dogs);
   } catch (error) {
     console.error("Get all dogs error:", error);
@@ -112,12 +98,7 @@ app.get("/dogs/mine", async (req, res) => {
 app.get("/dogs/discover/:dogId", async (req, res) => {
   try {
     const { dogId } = req.params;
-    const dogs = await Dog.findAll({
-      where: {
-        id: { [sequelize.Sequelize.Op.ne]: dogId }
-      },
-      limit: 50
-    });
+    const dogs = await Dog.find({ _id: { $ne: dogId } }).limit(50);
     res.json(dogs);
   } catch (error) {
     console.error("Discover dogs error:", error);
@@ -183,24 +164,11 @@ const PORT = process.env.PORT || 4000;
 // Start server and sync database
 async function startServer() {
   try {
-    // Test database connection
-    await sequelize.authenticate();
-    console.log("✅ PostgreSQL connected");
-    
-    // Sync all models
-    await sequelize.sync({ alter: true });
-    console.log("✅ Database synced");
-    
-    // Create default user if doesn't exist
-    const [user] = await User.findOrCreate({
-      where: { email: 'demo@pawpawsocial.com' },
-      defaults: {
-        name: 'Demo User',
-        password: 'demo123'
-      }
-    });
-    console.log("✅ Default user ready");
-    
+    // Wait for Mongoose to connect
+    if (mongoose.connection.readyState !== 1) {
+      throw new Error('MongoDB not connected');
+    }
+    console.log('✅ MongoDB Atlas connected');
     app.listen(PORT, () => {
       console.log(`✅ API running on port ${PORT}`);
       console.log(`📡 Health check: http://localhost:${PORT}/health`);
