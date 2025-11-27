@@ -1,4 +1,4 @@
-import mongoose from '../config/database.js';
+import mongoose from 'mongoose';
 
 const DogSchema = new mongoose.Schema({
   ownerId: { type: Number, default: 1 },

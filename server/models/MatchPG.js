@@ -1,4 +1,4 @@
-import mongoose from '../config/database.js';
+import mongoose from 'mongoose';
 
 const MatchSchema = new mongoose.Schema({
   dog1Id: { type: mongoose.Schema.Types.ObjectId, required: true },

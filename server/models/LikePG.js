@@ -1,4 +1,4 @@
-import mongoose from '../config/database.js';
+import mongoose from 'mongoose';
 
 const LikeSchema = new mongoose.Schema({
   dogId: { type: mongoose.Schema.Types.ObjectId, required: true },

@@ -1,14 +1,14 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import mongoose from "./config/database.js";
+
 dotenv.config();
+
+import connectDB from "./config/database.js";
 import User from "./models/UserPG.js";
 import Dog from "./models/DogPG.js";
 import Like from "./models/LikePG.js";
 import Match from "./models/MatchPG.js";
-
-dotenv.config();
 
 const app = express();
 
@@ -164,10 +164,9 @@ const PORT = process.env.PORT || 4000;
 // Start server and sync database
 async function startServer() {
   try {
-    // Wait for Mongoose to connect
-    if (mongoose.connection.readyState !== 1) {
-      throw new Error('MongoDB not connected');
-    }
+    // Connect to MongoDB
+    await connectDB();
+
     console.log('✅ MongoDB Atlas connected');
     app.listen(PORT, () => {
       console.log(`✅ API running on port ${PORT}`);
