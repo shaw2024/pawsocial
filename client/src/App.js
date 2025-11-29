@@ -253,12 +253,7 @@ function AddDog({ token, onDogCreated }) {
       // Create a data URL for preview and storage
       const reader = new FileReader();
       reader.onloadend = () => {
-        let dataUrl = reader.result;
-        // Ensure prefix is present
-        if (file && !dataUrl.startsWith('data:')) {
-          const mime = file.type || 'image/png';
-          dataUrl = `data:${mime};base64,${btoa(dataUrl)}`;
-        }
+        const dataUrl = reader.result;
         setImagePreview(dataUrl);
         setDog(prev => ({ ...prev, imageUrl: dataUrl }));
         setError("");
@@ -352,28 +347,18 @@ function AddDog({ token, onDogCreated }) {
         </div>
       )}
       {error && (
-          <div style={{ 
-            background: '#d4edda', 
-            border: '2px solid #28a745', 
-            padding: '12px', 
-            borderRadius: '8px', 
-            marginBottom: '12px',
-            color: '#155724',
-            fontWeight: '600',
-            position: 'relative'
-          }}>
-            {success}
-            <button style={{
-              position: 'absolute',
-              top: 6,
-              right: 10,
-              background: 'none',
-              border: 'none',
-              color: '#155724',
-              fontSize: '18px',
-              cursor: 'pointer'
-            }} onClick={() => setSuccess("")}>✕</button>
-          </div>
+        <div style={{ 
+          background: '#f8d7da', 
+          border: '2px solid #dc3545', 
+          padding: '12px', 
+          borderRadius: '8px', 
+          marginBottom: '12px',
+          color: '#721c24',
+          fontWeight: '600'
+        }}>
+          {error}
+        </div>
+      )}
       <form onSubmit={handleSave} className="panel-form">
         <div className="form-row">
           <label className="auth-label">
@@ -944,40 +929,49 @@ function Community({ activeDogId }) {
   return (
     <>
       <CreatePost onPostCreated={handlePostCreated} />
-      
-      return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', minHeight: '40vh', paddingTop: '40px' }}>
-          <form onSubmit={handlePost} style={{ background: '#f8f9fa', padding: '16px', borderRadius: '10px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', width: '100%', maxWidth: '260px', textAlign: 'center', border: '1px solid #e0e0e0' }}>
-            <h4 style={{ marginBottom: '10px', fontWeight: '600', color: '#333' }}>Create Dog Post</h4>
-            {error && <div style={{ color: '#d9534f', marginBottom: '8px', fontSize: '13px' }}>{error}</div>}
-            <input
-              type="text"
-              value={post.caption}
-              onChange={e => setPost(prev => ({ ...prev, caption: e.target.value }))}
-              placeholder="Caption (optional)"
-              maxLength="100"
-              style={{ width: '100%', marginBottom: '8px', padding: '6px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '13px' }}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={{ marginBottom: '8px', fontSize: '13px' }}
-            />
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', borderRadius: '6px', marginBottom: '8px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }} />
-            )}
-            {success && <div style={{ color: '#28a745', marginBottom: '8px', fontSize: '13px' }}>✓ {success}</div>}
-            <button
-              type="submit"
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', background: '#007bff', color: '#fff', fontWeight: 'bold', border: 'none', cursor: 'pointer', fontSize: '14px' }}
-              disabled={posting}
-            >
-              {posting ? "Posting..." : "Post"}
-            </button>
-          </form>
-        </div>
-      );
+
+      {/* Posts display will go here */}
+      <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading posts...</div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#d9534f' }}>{error}</div>
+        ) : allDogs.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>No posts yet. Be the first to share!</div>
+        ) : (
+          allDogs.map(dog => (
+            <div key={dog._id} style={{ background: '#fff', borderRadius: '10px', padding: '16px', marginBottom: '16px', boxShadow: '0 1px 6px rgba(0,0,0,0.06)', border: '1px solid #e0e0e0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#007bff', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginRight: '12px' }}>
+                  🐕
+                </div>
+                <div>
+                  <div style={{ fontWeight: '600', color: '#333' }}>{dog.name}</div>
+                  <div style={{ fontSize: '12px', color: '#666' }}>{dog.createdAt ? new Date(dog.createdAt).toLocaleDateString() : 'Just now'}</div>
+                </div>
+              </div>
+              {dog.images && dog.images[0] && (
+                <img src={dog.images[0]} alt={dog.name} style={{ width: '100%', borderRadius: '8px', marginBottom: '12px' }} />
+              )}
+              <div style={{ fontSize: '14px', color: '#333' }}>
+                {dog.breed && <span>{dog.breed}</span>}
+                {dog.age && <span> • {dog.age} years old</span>}
+                {dog.city && <span> • {dog.city}</span>}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </>
+  );
+
+  // Fetch user's dogs on component mount
+  useEffect(() => {
+    async function fetchDogs() {
+      try {
+        const res = await api.get("/dogs/mine");
+        setMyDogs(res.data || []);
+        if (res.data && res.data[0]) {
           setActiveDogId(res.data[0]._id);
         }
       } catch (err) {
