@@ -238,12 +238,25 @@ function AddDog({ token, onDogCreated }) {
 
   function handleFileChange(e) {
     const file = e.target.files[0];
-    if (!file) return;
-
+    if (!file) {
+      setImageBase64("");
+      setImagePreview("");
+      setError("");
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      setError('Please select an image file');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
     const reader = new FileReader();
     reader.onloadend = () => {
-      // reader.result is a base64 data URL, e.g. "data:image/png;base64,...."
       setImageBase64(reader.result);
+      setImagePreview(reader.result);
+      setError("");
     };
     reader.readAsDataURL(file);
   }
@@ -251,15 +264,11 @@ function AddDog({ token, onDogCreated }) {
   async function handleSave(e) {
     e.preventDefault();
     setError("");
-    
-    // Validate required fields
     if (!dog.name || !dog.name.trim()) {
       setError("Dog name is required");
       return;
     }
-    
     setSaving(true);
-    
     try {
       const payload = {
         name: dog.name,
@@ -271,20 +280,13 @@ function AddDog({ token, onDogCreated }) {
           ? dog.temperament.split(",").map(t => t.trim())
           : [],
         vaccinated: dog.vaccinated,
-        images: imageBase64
-          ? [imageBase64]                // use uploaded image
-          : dog.imageUrl
-          ? [dog.imageUrl]               // fallback to manual URL if provided
-          : [],                          // no image
+        images: imageBase64 ? [imageBase64] : [],
         city: dog.city,
         zip: dog.zip
       };
-
-      console.log("Saving dog with payload:", payload);
-      const res = await api.post("/dogs/create", payload, {
+      await api.post("/dogs/create", payload, {
         headers: { Authorization: "Bearer " + token }
       });
-      console.log("Dog created successfully:", res.data);
       
       onDogCreated(res.data);
       
