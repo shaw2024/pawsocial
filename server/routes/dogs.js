@@ -9,7 +9,7 @@ const router = express.Router();
 const BYPASS_USER_ID = new mongoose.Types.ObjectId("507f1f77bcf86cd799439011");
 
 // Create dog profile
-router.post("/create", async (req, res) => {
+router.post("/create", auth, async (req, res) => {
   try {
     const {
       name,
@@ -25,7 +25,7 @@ router.post("/create", async (req, res) => {
     } = req.body;
 
     const dog = await Dog.create({
-      ownerId: BYPASS_USER_ID,
+      ownerId: req.userId,
       name,
       age,
       breed,
@@ -33,14 +33,14 @@ router.post("/create", async (req, res) => {
       energy,
       temperament,
       vaccinated,
-      images,
+      images, // array of base64 or URLs
       location: { city, zip }
     });
 
     res.json(dog);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ msg: "Server error" });
+    res.status(500).json({ msg: "Server error creating dog" });
   }
 });
 

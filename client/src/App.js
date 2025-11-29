@@ -225,6 +225,7 @@ function AddDog({ token, onDogCreated }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [imagePreview, setImagePreview] = useState("");
+  const [imageBase64, setImageBase64] = useState("");
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -237,29 +238,14 @@ function AddDog({ token, onDogCreated }) {
 
   function handleFileChange(e) {
     const file = e.target.files[0];
-    if (file) {
-      // Check file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select an image file');
-        return;
-      }
-      
-      // Check file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image size must be less than 5MB');
-        return;
-      }
-      
-      // Create a data URL for preview and storage
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const dataUrl = reader.result;
-        setImagePreview(dataUrl);
-        setDog(prev => ({ ...prev, imageUrl: dataUrl }));
-        setError("");
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // reader.result is a base64 data URL, e.g. "data:image/png;base64,...."
+      setImageBase64(reader.result);
+    };
+    reader.readAsDataURL(file);
   }
 
   async function handleSave(e) {
@@ -276,22 +262,28 @@ function AddDog({ token, onDogCreated }) {
     
     try {
       const payload = {
-        name: dog.name.trim(),
+        name: dog.name,
         age: Number(dog.age) || undefined,
-        breed: dog.breed || undefined,
-        gender: dog.gender || undefined,
-        energy: dog.energy || undefined,
+        breed: dog.breed,
+        gender: dog.gender,
+        energy: dog.energy,
         temperament: dog.temperament
-          ? dog.temperament.split(",").map(t => t.trim()).filter(t => t)
+          ? dog.temperament.split(",").map(t => t.trim())
           : [],
         vaccinated: dog.vaccinated,
-        images: dog.imageUrl ? [dog.imageUrl] : [],
-        city: dog.city || undefined,
-        zip: dog.zip || undefined
+        images: imageBase64
+          ? [imageBase64]                // use uploaded image
+          : dog.imageUrl
+          ? [dog.imageUrl]               // fallback to manual URL if provided
+          : [],                          // no image
+        city: dog.city,
+        zip: dog.zip
       };
 
       console.log("Saving dog with payload:", payload);
-      const res = await api.post("/dogs/create", payload);
+      const res = await api.post("/dogs/create", payload, {
+        headers: { Authorization: "Bearer " + token }
+      });
       console.log("Dog created successfully:", res.data);
       
       onDogCreated(res.data);
