@@ -960,6 +960,16 @@ function Community({ activeDogId }) {
       </div>
     </>
   );
+}
+
+// ===== MAIN APP COMPONENT =====
+function App() {
+  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [view, setView] = useState("dashboard");
+  const [currentTab, setCurrentTab] = useState("addDog");
+  const [myDogs, setMyDogs] = useState([]);
+  const [activeDogId, setActiveDogId] = useState(null);
 
   // Fetch user's dogs on component mount
   useEffect(() => {
