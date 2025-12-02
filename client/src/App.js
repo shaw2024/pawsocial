@@ -284,9 +284,10 @@ function AddDog({ token, onDogCreated }) {
         city: dog.city,
         zip: dog.zip
       };
-      await api.post("/dogs/create", payload, {
-        headers: { Authorization: "Bearer " + token }
-      });
+      
+      console.log("Saving dog with payload:", { ...payload, images: payload.images.length > 0 ? [`base64 string (${payload.images[0].length} chars)`] : [] });
+      const res = await api.post("/dogs/create", payload);
+      console.log("Dog created successfully:", res.data);
       
       onDogCreated(res.data);
       
@@ -304,6 +305,7 @@ function AddDog({ token, onDogCreated }) {
         imageUrl: ""
       });
       setImagePreview("");
+      setImageBase64("");
       setError("");
       setSuccess(`✅ ${res.data.name} added successfully!`);
       

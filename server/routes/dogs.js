@@ -9,7 +9,7 @@ const router = express.Router();
 const BYPASS_USER_ID = new mongoose.Types.ObjectId("507f1f77bcf86cd799439011");
 
 // Create dog profile
-router.post("/create", auth, async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
     const {
       name,
@@ -25,7 +25,7 @@ router.post("/create", auth, async (req, res) => {
     } = req.body;
 
     const dog = await Dog.create({
-      ownerId: req.userId,
+      ownerId: BYPASS_USER_ID,
       name,
       age,
       breed,
