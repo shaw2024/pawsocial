@@ -3,7 +3,6 @@ services:
   - type: web
     name: pawsocial-api
     runtime: node
-    region: oregon
     plan: free
     buildCommand: cd server && npm install
     startCommand: cd server && npm run start:mongo
@@ -11,7 +10,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: MONGO_URL
-        sync: false  # You'll set this in Render dashboard
+        sync: false
       - key: PORT
         value: 4000
       - key: JWT_SECRET
