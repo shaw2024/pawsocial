@@ -1,13 +1,10 @@
 import axios from "axios";
 
 // Use environment variable or fallback based on hostname
-let baseURL = process.env.REACT_APP_API_URL || "http://localhost:4000";
-
-// If on GitHub Pages, use the production backend URL
-// Replace this with your actual Render.com URL once deployed
-if (window.location.hostname.includes('github.io')) {
-  baseURL = process.env.REACT_APP_API_URL || "https://your-app-name.onrender.com";
-}
+const baseURL = process.env.REACT_APP_API_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://pawsocial-api.onrender.com' 
+    : 'http://localhost:4000');
 
 const api = axios.create({
   baseURL: baseURL,
