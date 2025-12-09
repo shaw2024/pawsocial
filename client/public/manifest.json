@@ -1,0 +1,15 @@
+{
+  "short_name": "PawPawSocial",
+  "name": "PawPawSocial - Dog Matching App",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#8b7355",
+  "background_color": "#faf8f3"
+}

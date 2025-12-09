@@ -1,0 +1,38 @@
+services:
+  # Backend API Service
+  - type: web
+    name: pawsocial-api
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm run start:mongo
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URL
+        sync: false  # You'll set this in Render dashboard
+      - key: PORT
+        value: 4000
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /health
+
+  # Frontend Static Site
+  - type: web
+    name: pawsocial-client
+    runtime: static
+    region: oregon
+    plan: free
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: ./client/build
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: pawsocial-api
+          envVarKey: RENDER_EXTERNAL_URL
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
