@@ -11,6 +11,7 @@ const DogSchema = new mongoose.Schema(
     temperament: [String], // e.g. ["playful", "friendly"]
     vaccinated: Boolean,
     images: [String],
+    caption: String, // For community posts
     location: {
       city: String,
       zip: String

@@ -20,6 +20,7 @@ router.post("/create", async (req, res) => {
       temperament = [],
       vaccinated,
       images = [],
+      caption,
       city,
       zip
     } = req.body;
@@ -34,6 +35,7 @@ router.post("/create", async (req, res) => {
       temperament,
       vaccinated,
       images, // array of base64 or URLs
+      caption,
       location: { city, zip }
     });
 

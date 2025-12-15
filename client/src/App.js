@@ -258,6 +258,9 @@ function AddDog({ token, onDogCreated }) {
       setImagePreview(reader.result);
       setError("");
     };
+    reader.onerror = () => {
+      setError('Failed to read image file. Please try again.');
+    };
     reader.readAsDataURL(file);
   }
 
@@ -280,7 +283,7 @@ function AddDog({ token, onDogCreated }) {
           ? dog.temperament.split(",").map(t => t.trim())
           : [],
         vaccinated: dog.vaccinated,
-        images: imageBase64 ? [imageBase64] : [],
+        images: imageBase64 ? [imageBase64] : (dog.imageUrl ? [dog.imageUrl] : []),
         city: dog.city,
         zip: dog.zip
       };
@@ -716,6 +719,9 @@ function CreatePost({ onPostCreated }) {
         setPost(prev => ({ ...prev, imageUrl: dataUrl }));
         setError("");
       };
+      reader.onerror = () => {
+        setError('Failed to read image file. Please try again.');
+      };
       reader.readAsDataURL(file);
     }
   }
@@ -746,6 +752,7 @@ function CreatePost({ onPostCreated }) {
         name: post.caption?.trim() || "Community Post",
         breed: "Community Share",
         images: [post.imageUrl],
+        caption: post.caption?.trim() || "",
         temperament: ["community-post"]
       };
       
