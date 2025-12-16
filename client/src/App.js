@@ -248,8 +248,8 @@ function AddDog({ token, onDogCreated }) {
       setError('Please select an image file');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image size must be less than 5MB');
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Image size must be less than 2MB. Please compress your image.');
       return;
     }
     const reader = new FileReader();
@@ -320,7 +320,13 @@ function AddDog({ token, onDogCreated }) {
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Error creating dog:", err);
-      setError(err.response?.data?.message || "Failed to create dog profile. Please try again.");
+      if (err.code === 'ECONNABORTED') {
+        setError("Upload took too long. Try a smaller image (under 2MB).");
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Failed to create dog profile. Please try again.");
+      }
     } finally {
       setSaving(false);
     }
@@ -707,8 +713,8 @@ function CreatePost({ onPostCreated }) {
         return;
       }
       
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image size must be less than 5MB');
+      if (file.size > 2 * 1024 * 1024) {
+        setError('Image size must be less than 2MB. Please compress your image.');
         return;
       }
       
@@ -774,7 +780,13 @@ function CreatePost({ onPostCreated }) {
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       console.error("Error creating post:", err);
-      setError(err.response?.data?.message || "Failed to post. Please try again.");
+      if (err.code === 'ECONNABORTED') {
+        setError("Upload took too long. Try a smaller image (under 2MB).");
+      } else if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Failed to post. Please try again.");
+      }
     } finally {
       setPosting(false);
     }

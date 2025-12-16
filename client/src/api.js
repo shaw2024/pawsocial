@@ -8,7 +8,7 @@ const baseURL = process.env.REACT_APP_API_URL ||
 
 const api = axios.create({
   baseURL: baseURL,
-  timeout: 10000,
+  timeout: 60000, // Increased to 60 seconds for large image uploads
   headers: {
     'Content-Type': 'application/json'
   }
