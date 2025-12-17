@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/pawsocial/static/css/main.fbdc45c0.css",
-    "main.js": "/pawsocial/static/js/main.d6f1b286.js",
+    "main.js": "/pawsocial/static/js/main.99ca4b55.js",
     "index.html": "/pawsocial/index.html",
     "main.fbdc45c0.css.map": "/pawsocial/static/css/main.fbdc45c0.css.map",
-    "main.d6f1b286.js.map": "/pawsocial/static/js/main.d6f1b286.js.map"
+    "main.99ca4b55.js.map": "/pawsocial/static/js/main.99ca4b55.js.map"
   },
   "entrypoints": [
     "static/css/main.fbdc45c0.css",
-    "static/js/main.d6f1b286.js"
+    "static/js/main.99ca4b55.js"
   ]
 }
