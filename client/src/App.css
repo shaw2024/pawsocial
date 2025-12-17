@@ -1,0 +1,221 @@
+.app {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 1.1em;
+  opacity: 0.9;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab {
+  padding: 10px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  border-radius: 25px;
+  font-size: 1em;
+  transition: all 0.3s;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tab.active {
+  background: white;
+  color: #667eea;
+  border-color: white;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.panel {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.panel h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 5px;
+  font-size: 1em;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.image-preview {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  background: #f0f0f0;
+  color: #333;
+  text-align: center;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.community {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.community h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.no-dogs {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+}
+
+.dogs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.dog-card {
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 15px;
+  transition: all 0.3s;
+}
+
+.dog-card:hover {
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+}
+
+.dog-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.dog-card h3 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1.3em;
+}
+
+.dog-card p {
+  margin: 8px 0;
+  font-size: 0.95em;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 2em;
+  }
+
+  .dogs-grid {
+    grid-template-columns: 1fr;
+  }
+}
