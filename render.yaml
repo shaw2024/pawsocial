@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: pawsocial-api
+    env: node
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: MONGO_URL
+        scope: run
+        value: mongodb+srv://shw30_db_user:Goodday2025@pawpawsocial.cndiwia.mongodb.net/pawsocial
+      - key: PORT
+        value: 4000

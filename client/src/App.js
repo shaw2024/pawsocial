@@ -2,8 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const API_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://pawsocial-api.onrender.com' 
+  : 'http://localhost:4000';
+
 const api = axios.create({
-  baseURL: 'http://localhost:4000',
+  baseURL: API_URL,
   timeout: 30000
 });
 
