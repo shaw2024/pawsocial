@@ -29,6 +29,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [activeTab, setActiveTab] = useState('add');
+  const [commentText, setCommentText] = useState({});
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
@@ -105,7 +106,8 @@ function App() {
         ...formData,
         age: formData.age ? Number(formData.age) : undefined,
         temperament: formData.temperament ? formData.temperament.split(',').map(t => t.trim()) : [],
-        images: [image]
+        images: [image],
+        userId: user.id
       };
 
       console.log('📤 Uploading dog:', formData.name);
@@ -154,6 +156,45 @@ function App() {
     setImagePreview(null);
     setMessage('');
     setActiveTab('add');
+  };
+
+  const handleLike = async (dogId) => {
+    try {
+      const response = await api.post(`/dogs/${dogId}/like`, { userId: user.id });
+      setDogs(dogs.map(d => d._id === dogId ? response.data : d));
+    } catch (err) {
+      console.error('❌ Error liking dog:', err);
+    }
+  };
+
+  const handleAddComment = async (dogId) => {
+    const text = commentText[dogId]?.trim();
+    if (!text) return;
+
+    try {
+      const response = await api.post(`/dogs/${dogId}/comment`, {
+        userId: user.id,
+        userName: user.email.split('@')[0],
+        text
+      });
+      setDogs(dogs.map(d => d._id === dogId ? response.data : d));
+      setCommentText({ ...commentText, [dogId]: '' });
+    } catch (err) {
+      console.error('❌ Error adding comment:', err);
+    }
+  };
+
+  const handleDeleteDog = async (dogId) => {
+    if (!window.confirm('Delete this dog profile?')) return;
+
+    try {
+      await api.delete(`/dogs/${dogId}`, { data: { userId: user.id } });
+      setDogs(dogs.filter(d => d._id !== dogId));
+      setMessage('✅ Dog deleted successfully');
+    } catch (err) {
+      console.error('❌ Error deleting dog:', err);
+      setMessage(`❌ ${err.response?.data?.error || 'Failed to delete dog'}`);
+    }
   };
 
   if (!user) {
@@ -328,7 +369,18 @@ function App() {
                         <div className="dog-image-placeholder">📷 No image</div>
                       )}
                     </div>
-                    <h3>{dog.name}</h3>
+                    <div className="dog-card-header">
+                      <h3>{dog.name}</h3>
+                      {dog.userId === user.id && (
+                        <button 
+                          onClick={() => handleDeleteDog(dog._id)}
+                          className="btn-delete"
+                          title="Delete this dog"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
                     {dog.breed && <p><strong>Breed:</strong> {dog.breed}</p>}
                     {dog.age && <p><strong>Age:</strong> {dog.age}</p>}
                     {dog.gender && <p><strong>Gender:</strong> {dog.gender}</p>}
@@ -337,6 +389,39 @@ function App() {
                     {dog.temperament && dog.temperament.length > 0 && (
                       <p><strong>Temperament:</strong> {dog.temperament.join(', ')}</p>
                     )}
+
+                    <div className="dog-interactions">
+                      <button 
+                        onClick={() => handleLike(dog._id)}
+                        className={`btn-like ${dog.likes?.includes(user.id) ? 'liked' : ''}`}
+                      >
+                        ❤️ {dog.likes?.length || 0} Likes
+                      </button>
+                    </div>
+
+                    {dog.comments && dog.comments.length > 0 && (
+                      <div className="dog-comments">
+                        <strong>Comments ({dog.comments.length})</strong>
+                        {dog.comments.map((comment, idx) => (
+                          <div key={idx} className="comment">
+                            <strong>{comment.userName}:</strong> {comment.text}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="comment-form">
+                      <input
+                        type="text"
+                        placeholder="Add a comment..."
+                        value={commentText[dog._id] || ''}
+                        onChange={(e) => setCommentText({ ...commentText, [dog._id]: e.target.value })}
+                        onKeyPress={(e) => e.key === 'Enter' && handleAddComment(dog._id)}
+                      />
+                      <button onClick={() => handleAddComment(dog._id)} className="btn-comment">
+                        💬
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

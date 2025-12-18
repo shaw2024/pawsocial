@@ -33,6 +33,14 @@ const dogSchema = new mongoose.Schema({
   images: [String],
   city: String,
   zip: String,
+  userId: String,
+  likes: [String],
+  comments: [{
+    userId: String,
+    userName: String,
+    text: String,
+    createdAt: { type: Date, default: Date.now }
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -45,7 +53,7 @@ app.get('/health', (req, res) => {
 
 app.post('/dogs/create', async (req, res) => {
   try {
-    const { name, breed, age, gender, energy, temperament, vaccinated, images, city, zip } = req.body;
+    const { name, breed, age, gender, energy, temperament, vaccinated, images, city, zip, userId } = req.body;
     
     const dog = new Dog({
       name,
@@ -57,7 +65,10 @@ app.post('/dogs/create', async (req, res) => {
       vaccinated,
       images: images || [],
       city,
-      zip
+      zip,
+      userId,
+      likes: [],
+      comments: []
     });
 
     await dog.save();
@@ -81,6 +92,59 @@ app.get('/dogs/:id', async (req, res) => {
   try {
     const dog = await Dog.findById(req.params.id);
     res.json(dog);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Like/Unlike a dog
+app.post('/dogs/:id/like', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const dog = await Dog.findById(req.params.id);
+    
+    if (!dog) return res.status(404).json({ error: 'Dog not found' });
+    
+    if (dog.likes.includes(userId)) {
+      dog.likes = dog.likes.filter(id => id !== userId);
+    } else {
+      dog.likes.push(userId);
+    }
+    
+    await dog.save();
+    res.json(dog);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Add comment to a dog
+app.post('/dogs/:id/comment', async (req, res) => {
+  try {
+    const { userId, userName, text } = req.body;
+    const dog = await Dog.findById(req.params.id);
+    
+    if (!dog) return res.status(404).json({ error: 'Dog not found' });
+    
+    dog.comments.push({ userId, userName, text });
+    await dog.save();
+    res.json(dog);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a dog (owner only)
+app.delete('/dogs/:id', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const dog = await Dog.findById(req.params.id);
+    
+    if (!dog) return res.status(404).json({ error: 'Dog not found' });
+    if (dog.userId !== userId) return res.status(403).json({ error: 'Not authorized' });
+    
+    await Dog.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Dog deleted successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
