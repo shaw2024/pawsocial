@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import SignIn from './SignIn';
 import './App.css';
 
 const API_URL = 'https://pawsocial-api.onrender.com';
@@ -10,6 +11,7 @@ const api = axios.create({
 });
 
 function App() {
+  const [user, setUser] = useState(null);
   const [dogs, setDogs] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -29,7 +31,11 @@ function App() {
   const [activeTab, setActiveTab] = useState('add');
 
   useEffect(() => {
-    fetchDogs();
+    const storedUser = localStorage.getItem('pawsocial_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      fetchDogs();
+    }
   }, []);
 
   const fetchDogs = async () => {
@@ -119,12 +125,43 @@ function App() {
       setLoading(false);
     }
   };
+  const handleSignOut = () => {
+    localStorage.removeItem('pawsocial_user');
+    setUser(null);
+    setDogs([]);
+    setFormData({
+      name: '',
+      breed: '',
+      age: '',
+      gender: '',
+      energy: '',
+      temperament: '',
+      vaccinated: false,
+      city: '',
+      zip: ''
+    });
+    setImage(null);
+    setImagePreview(null);
+    setMessage('');
+    setActiveTab('add');
+  };
 
+  if (!user) {
+    return <SignIn onSignIn={setUser} />;
+  }
   return (
     <div className="app">
       <header className="header">
-        <h1>🐕 PawSocial</h1>
-        <p>Dog Matching & Community App</p>
+        <div className="header-content">
+          <div>
+            <h1>🐕 PawSocial</h1>
+            <p>Dog Matching & Community App</p>
+          </div>
+          <div className="header-right">
+            <span className="user-email">{user.email}</span>
+            <button onClick={handleSignOut} className="btn-signout">Sign Out</button>
+          </div>
+        </div>
       </header>
 
       <div className="tabs">
