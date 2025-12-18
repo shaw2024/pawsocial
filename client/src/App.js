@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://pawsocial-api.onrender.com' 
-  : 'http://localhost:4000';
+const API_URL = 'https://pawsocial-api.onrender.com';
 
 const api = axios.create({
   baseURL: API_URL,
