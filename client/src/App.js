@@ -34,9 +34,15 @@ function App() {
     const storedUser = localStorage.getItem('pawsocial_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
-      fetchDogs();
     }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      console.log('👤 User logged in:', user.email);
+      fetchDogs();
+    }
+  }, [user]);
 
   const fetchDogs = async () => {
     try {
