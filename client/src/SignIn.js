@@ -37,6 +37,21 @@ function SignIn({ onSignIn }) {
     }, 500);
   };
 
+  const handleFreeAccess = () => {
+    setLoading(true);
+    setTimeout(() => {
+      const guestUser = {
+        email: 'guest@pawsocial.app',
+        id: 'guest_' + Date.now().toString(),
+        isGuest: true,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('pawsocial_user', JSON.stringify(guestUser));
+      onSignIn(guestUser);
+      setLoading(false);
+    }, 500);
+  };
+
   return (
     <div className="signin-container">
       <div className="signin-card">
@@ -80,6 +95,15 @@ function SignIn({ onSignIn }) {
             className="signin-button"
           >
             {loading ? 'Loading...' : isSignUp ? 'Create Account' : 'Sign In'}
+          </button>
+
+          <button
+            type="button"
+            disabled={loading}
+            onClick={handleFreeAccess}
+            className="free-access-button"
+          >
+            {loading ? 'Loading...' : 'Continue as Guest'}
           </button>
         </form>
 

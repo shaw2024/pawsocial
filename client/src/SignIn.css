@@ -119,6 +119,34 @@
   transform: translateY(0);
 }
 
+.free-access-button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.free-access-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+}
+
+.free-access-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.free-access-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 .signin-footer {
   text-align: center;
   margin-top: 25px;

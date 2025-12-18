@@ -158,7 +158,9 @@ function App() {
             <p>Dog Matching & Community App</p>
           </div>
           <div className="header-right">
-            <span className="user-email">{user.email}</span>
+            <span className="user-email">
+              {user.isGuest ? '👤 Guest' : user.email}
+            </span>
             <button onClick={handleSignOut} className="btn-signout">Sign Out</button>
           </div>
         </div>
