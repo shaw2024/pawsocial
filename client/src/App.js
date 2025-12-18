@@ -41,9 +41,11 @@ function App() {
   const fetchDogs = async () => {
     try {
       const response = await api.get('/dogs/all');
+      console.log('✅ Dogs fetched:', response.data.length);
       setDogs(response.data);
     } catch (err) {
-      console.error('Error fetching dogs:', err);
+      console.error('❌ Error fetching dogs:', err.message);
+      setMessage('❌ Failed to load dogs. Please refresh the page.');
     }
   };
 
@@ -100,8 +102,10 @@ function App() {
         images: [image]
       };
 
+      console.log('📤 Uploading dog:', formData.name);
       const response = await api.post('/dogs/create', payload);
-      setMessage(`✅ ${response.data.name} added successfully!`);
+      console.log('✅ Dog saved successfully:', response.data);
+      setMessage(`✅ ${response.data.name} added successfully! Image saved.`);
       
       setFormData({
         name: '',
@@ -119,8 +123,8 @@ function App() {
       
       fetchDogs();
     } catch (err) {
-      console.error('Error:', err);
-      setMessage(`❌ ${err.response?.data?.error || err.message || 'Failed to add dog'}`);
+      console.error('❌ Error uploading dog:', err);
+      setMessage(`❌ ${err.response?.data?.error || err.message || 'Failed to add dog. Check browser console for details.'}`);
     } finally {
       setLoading(false);
     }
@@ -311,9 +315,13 @@ function App() {
               <div className="dogs-grid">
                 {dogs.map(dog => (
                   <div key={dog._id} className="dog-card">
-                    {dog.images && dog.images[0] && (
-                      <img src={dog.images[0]} alt={dog.name} className="dog-image" />
-                    )}
+                    <div className="dog-image-container">
+                      {dog.images && dog.images[0] ? (
+                        <img src={dog.images[0]} alt={dog.name} className="dog-image" />
+                      ) : (
+                        <div className="dog-image-placeholder">📷 No image</div>
+                      )}
+                    </div>
                     <h3>{dog.name}</h3>
                     {dog.breed && <p><strong>Breed:</strong> {dog.breed}</p>}
                     {dog.age && <p><strong>Age:</strong> {dog.age}</p>}
