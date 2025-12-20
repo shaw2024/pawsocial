@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SignIn from './SignIn';
+import Profile from './Profile';
 import './App.css';
 
 const API_URL = 'https://pawsocial-api.onrender.com';
@@ -28,13 +29,16 @@ function App() {
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('add');
   const [commentText, setCommentText] = useState({});
+  const [activePage, setActivePage] = useState('profile');
+  const [selectedBreed, setSelectedBreed] = useState('all');
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+      setActivePage('profile');
     }
   }, []);
 
@@ -155,7 +159,7 @@ function App() {
     setImage(null);
     setImagePreview(null);
     setMessage('');
-    setActiveTab('add');
+    setActivePage('profile');
   };
 
   const handleLike = async (dogId) => {
@@ -200,6 +204,11 @@ function App() {
   if (!user) {
     return <SignIn onSignIn={setUser} />;
   }
+
+  if (activePage === 'profile') {
+    return <Profile user={user} onNavigate={setActivePage} onSignOut={handleSignOut} />;
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -209,31 +218,45 @@ function App() {
             <p>Dog Matching & Community App</p>
           </div>
           <div className="header-right">
-            <span className="user-email">
-              {user.isGuest ? '👤 Guest' : user.email}
-            </span>
-            <button onClick={handleSignOut} className="btn-signout">Sign Out</button>
+            <div className="profile-menu-container">
+              <button 
+                onClick={() => setShowProfileMenu(!showProfileMenu)} 
+                className="btn-profile"
+              >
+                👤 Profile
+              </button>
+              {showProfileMenu && (
+                <div className="profile-dropdown">
+                  <button onClick={() => { setActivePage('profile'); setShowProfileMenu(false); }}>
+                    View Profile
+                  </button>
+                  <button onClick={handleSignOut}>
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
       <div className="tabs">
         <button 
-          className={`tab ${activeTab === 'add' ? 'active' : ''}`}
-          onClick={() => setActiveTab('add')}
+          className={`tab ${activePage === 'add' ? 'active' : ''}`}
+          onClick={() => setActivePage('add')}
         >
           Add Dog
         </button>
         <button 
-          className={`tab ${activeTab === 'community' ? 'active' : ''}`}
-          onClick={() => setActiveTab('community')}
+          className={`tab ${activePage === 'community' ? 'active' : ''}`}
+          onClick={() => setActivePage('community')}
         >
           Community ({dogs.length})
         </button>
       </div>
 
       <div className="container">
-        {activeTab === 'add' && (
+        {activePage === 'add' && (
           <div className="panel">
             <h2>Add Your Dog</h2>
             <form onSubmit={handleSubmit}>
@@ -353,14 +376,36 @@ function App() {
           </div>
         )}
 
-        {activeTab === 'community' && (
+        {activePage === 'community' && (
           <div className="community">
             <h2>Community Dogs</h2>
+            <div className="filter-section">
+              <label htmlFor="breed-filter">Filter by Popular Breeds:</label>
+              <select 
+                id="breed-filter"
+                value={selectedBreed} 
+                onChange={(e) => setSelectedBreed(e.target.value)}
+              >
+                <option value="all">All Breeds</option>
+                <option value="Labrador Retriever">Labrador Retriever</option>
+                <option value="German Shepherd">German Shepherd</option>
+                <option value="Golden Retriever">Golden Retriever</option>
+                <option value="Bulldog">Bulldog</option>
+                <option value="Beagle">Beagle</option>
+                <option value="Poodle">Poodle</option>
+                <option value="Rottweiler">Rottweiler</option>
+                <option value="Yorkshire Terrier">Yorkshire Terrier</option>
+                <option value="Boxer">Boxer</option>
+                <option value="Dachshund">Dachshund</option>
+              </select>
+            </div>
             {dogs.length === 0 ? (
               <p className="no-dogs">No dogs yet. Add one to get started!</p>
             ) : (
               <div className="dogs-grid">
-                {dogs.map(dog => (
+                {dogs
+                  .filter(dog => selectedBreed === 'all' || dog.breed === selectedBreed)
+                  .map(dog => (
                   <div key={dog._id} className="dog-card">
                     <div className="dog-image-container">
                       {dog.images && dog.images[0] ? (
