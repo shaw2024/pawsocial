@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TermsModal from './TermsModal';
 import './SignIn.css';
 
 function SignIn({ onSignIn }) {
@@ -7,6 +8,7 @@ function SignIn({ onSignIn }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [modalType, setModalType] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -133,7 +135,30 @@ function SignIn({ onSignIn }) {
             <li>✅ Share dog photos</li>
           </ul>
         </div>
+
+        <div className="signin-legal">
+          <p>
+            By signing in, you agree to our{' '}
+            <button 
+              type="button"
+              className="legal-link"
+              onClick={() => setModalType('terms')}
+            >
+              Terms & Conditions
+            </button>
+            {' '}and{' '}
+            <button 
+              type="button"
+              className="legal-link"
+              onClick={() => setModalType('privacy')}
+            >
+              Privacy Policy
+            </button>
+          </p>
+        </div>
       </div>
+
+      {modalType && <TermsModal type={modalType} onClose={() => setModalType(null)} />}
     </div>
   );
 }
