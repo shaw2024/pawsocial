@@ -84,3 +84,61 @@
 .menu-btn.signout:hover {
   background: #c82333;
 }
+
+@media (max-width: 600px) {
+  .profile {
+    max-width: 100%;
+    margin: 0;
+    padding: 15px;
+    border-radius: 0;
+    box-shadow: none;
+    min-height: auto;
+  }
+
+  .profile-header {
+    margin-bottom: 25px;
+  }
+
+  .profile-header h1 {
+    font-size: 1.5em;
+    margin-bottom: 8px;
+  }
+
+  .profile-header p {
+    font-size: 14px;
+  }
+
+  .profile-content {
+    gap: 15px;
+  }
+
+  .profile-info {
+    padding: 15px;
+    border-radius: 6px;
+  }
+
+  .profile-info h2 {
+    font-size: 1.1em;
+  }
+
+  .profile-info p {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+
+  .profile-menu {
+    padding: 15px;
+    border-radius: 6px;
+  }
+
+  .profile-menu h2 {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+  }
+
+  .menu-btn {
+    padding: 12px;
+    font-size: 14px;
+    margin: 8px 0;
+  }
+}
