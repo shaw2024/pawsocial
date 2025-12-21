@@ -4,7 +4,7 @@ import SignIn from './SignIn';
 import Profile from './Profile';
 import './App.css';
 
-const API_URL = 'https://pawsocial-api.onrender.com';
+const API_URL = 'http://localhost:4000';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -45,6 +45,7 @@ function App() {
   useEffect(() => {
     if (user) {
       console.log('👤 User logged in:', user.email);
+      setActivePage('profile');
       fetchDogs();
     }
   }, [user]);
