@@ -82,6 +82,23 @@
   transform: translateY(-2px);
 }
 
+.btn-profile-main {
+  padding: 8px 15px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.btn-profile-main:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
 .profile-dropdown {
   position: absolute;
   top: 100%;

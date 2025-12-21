@@ -219,12 +219,18 @@ function App() {
             <p>Dog Matching & Community App</p>
           </div>
           <div className="header-right">
+            <button 
+              onClick={() => setActivePage('profile')} 
+              className="btn-profile-main"
+            >
+              👤 My Profile
+            </button>
             <div className="profile-menu-container">
               <button 
                 onClick={() => setShowProfileMenu(!showProfileMenu)} 
                 className="btn-profile"
               >
-                👤 Profile
+                Menu
               </button>
               {showProfileMenu && (
                 <div className="profile-dropdown">
