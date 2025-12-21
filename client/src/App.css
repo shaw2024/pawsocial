@@ -3,8 +3,6 @@
 \
 
 .app {
-
-
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
@@ -644,6 +642,8 @@
   padding: 8px 0;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 999;
+  flex-direction: row;
+  width: 100%;
 }
 
 .bottom-nav button {
@@ -659,6 +659,7 @@
   align-items: center;
   gap: 4px;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .bottom-nav button:hover {
@@ -673,6 +674,10 @@
 }
 
 @media (max-width: 600px) {
+  html {
+    padding-bottom: 70px;
+  }
+
   body {
     padding-bottom: 70px;
   }
@@ -682,6 +687,6 @@
   }
 
   .app {
-    padding-bottom: 70px;
+    position: relative;
   }
 }

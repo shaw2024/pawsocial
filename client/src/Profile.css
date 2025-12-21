@@ -87,12 +87,16 @@
 
 @media (max-width: 600px) {
   .profile {
+    width: 100%;
     max-width: 100%;
     margin: 0;
     padding: 15px;
+    padding-bottom: 85px;
     border-radius: 0;
     box-shadow: none;
-    min-height: auto;
+    min-height: calc(100vh - 70px);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
   }
 
   .profile-header {
@@ -102,10 +106,12 @@
   .profile-header h1 {
     font-size: 1.5em;
     margin-bottom: 8px;
+    color: white;
   }
 
   .profile-header p {
     font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .profile-content {
@@ -115,30 +121,60 @@
   .profile-info {
     padding: 15px;
     border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
   }
 
   .profile-info h2 {
     font-size: 1.1em;
+    color: white;
   }
 
   .profile-info p {
     font-size: 14px;
     margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .profile-info strong {
+    color: white;
   }
 
   .profile-menu {
     padding: 15px;
     border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .profile-menu h2 {
     font-size: 1.1em;
     margin-bottom: 15px;
+    color: white;
+    text-align: center;
   }
 
   .menu-btn {
     padding: 12px;
     font-size: 14px;
     margin: 8px 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .menu-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .menu-btn.signout {
+    background: rgba(220, 53, 69, 0.3);
+    border-color: rgba(220, 53, 69, 0.5);
+  }
+
+  .menu-btn.signout:hover {
+    background: rgba(220, 53, 69, 0.4);
   }
 }
