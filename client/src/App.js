@@ -207,7 +207,11 @@ function App() {
   }
 
   if (activePage === 'profile') {
-    return <Profile user={user} onNavigate={setActivePage} onSignOut={handleSignOut} />;
+    return (
+      <div className="app">
+        <Profile user={user} onNavigate={setActivePage} onSignOut={handleSignOut} />
+      </div>
+    );
   }
 
   return (
