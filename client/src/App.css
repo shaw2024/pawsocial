@@ -627,4 +627,61 @@
     font-size: 0.9em;
     padding: 10px;
   }
+
+  .bottom-nav {
+    display: none;
+  }
+}
+
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-top: 2px solid rgba(102, 126, 234, 0.3);
+  padding: 8px 0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}
+
+.bottom-nav button {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.bottom-nav button:hover {
+  color: #764ba2;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.bottom-nav button.active {
+  color: #764ba2;
+  font-weight: bold;
+  background: rgba(102, 126, 234, 0.15);
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-bottom: 70px;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  .app {
+    padding-bottom: 70px;
+  }
 }

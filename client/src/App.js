@@ -228,10 +228,37 @@ function App() {
     return <SignIn onSignIn={setUser} />;
   }
 
+  const renderBottomNav = () => (
+    <div className="bottom-nav">
+      <button 
+        onClick={() => setActivePage('profile')} 
+        className={activePage === 'profile' ? 'active' : ''}
+      >
+        👤 Profile
+      </button>
+      <button 
+        onClick={() => setActivePage('community')} 
+        className={activePage === 'community' ? 'active' : ''}
+      >
+        👥 Community
+      </button>
+      <button 
+        onClick={() => setActivePage('add')} 
+        className={activePage === 'add' ? 'active' : ''}
+      >
+        🐶 Add Dog
+      </button>
+      <button onClick={handleSignOut}>
+        🚪 Sign Out
+      </button>
+    </div>
+  );
+
   if (activePage === 'profile') {
     return (
       <div className="app">
         <Profile user={user} onNavigate={setActivePage} onSignOut={handleSignOut} />
+        {renderBottomNav()}
       </div>
     );
   }
@@ -486,6 +513,7 @@ function App() {
                     {dog.comments && dog.comments.length > 0 && (
                       <div className="dog-comments">
                         <strong>Comments ({dog.comments.length})</strong>
+      {renderBottomNav()}
                         {dog.comments.map((comment, idx) => (
                           <div key={idx} className="comment">
                             <strong>{comment.userName}:</strong> {comment.text}
