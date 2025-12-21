@@ -33,12 +33,21 @@ function App() {
   const [activePage, setActivePage] = useState('profile');
   const [selectedBreed, setSelectedBreed] = useState('all');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [savedDogs, setSavedDogs] = useState([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
       setActivePage('profile');
+    }
+  }, []);
+
+  useEffect(() => {
+    // Load saved dogs from localStorage
+    const storedSavedDogs = localStorage.getItem('pawsocial_saved_dogs');
+    if (storedSavedDogs) {
+      setSavedDogs(JSON.parse(storedSavedDogs));
     }
   }, []);
 
@@ -170,6 +179,19 @@ function App() {
     } catch (err) {
       console.error('❌ Error liking dog:', err);
     }
+  };
+
+  const handleSave = (dogId) => {
+    let newSavedDogs;
+    if (savedDogs.includes(dogId)) {
+      // Remove from saved
+      newSavedDogs = savedDogs.filter(id => id !== dogId);
+    } else {
+      // Add to saved
+      newSavedDogs = [...savedDogs, dogId];
+    }
+    setSavedDogs(newSavedDogs);
+    localStorage.setItem('pawsocial_saved_dogs', JSON.stringify(newSavedDogs));
   };
 
   const handleAddComment = async (dogId) => {
@@ -452,6 +474,12 @@ function App() {
                         className={`btn-like ${dog.likes?.includes(user.id) ? 'liked' : ''}`}
                       >
                         ❤️ {dog.likes?.length || 0} Likes
+                      </button>
+                      <button 
+                        onClick={() => handleSave(dog._id)}
+                        className={`btn-save ${savedDogs.includes(dog._id) ? 'saved' : ''}`}
+                      >
+                        {savedDogs.includes(dog._id) ? '⭐ Saved' : '☆ Save'}
                       </button>
                     </div>
 
