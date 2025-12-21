@@ -87,6 +87,13 @@ function SignIn({ onSignIn }) {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              className="forgot-password-link"
+              onClick={() => alert('Password recovery feature coming soon! Please contact support at support@pawsocial.app')}
+            >
+              Forgot password?
+            </button>
           </div>
 
           {error && <div className="error-message">{error}</div>}
