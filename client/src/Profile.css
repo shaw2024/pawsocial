@@ -1,6 +1,6 @@
 .profile {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 20px;
   background: white;
   border-radius: 10px;
@@ -10,6 +10,8 @@
   width: 100%;
   visibility: visible;
   opacity: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .profile-header {
