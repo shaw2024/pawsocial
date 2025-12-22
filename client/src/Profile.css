@@ -51,6 +51,7 @@
   padding: 20px;
   border-radius: 8px;
   border: 1px solid #ddd;
+  overflow: visible;
 }
 
 .profile-menu h2 {
@@ -115,17 +116,17 @@
 
 .breed-dropdown {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 2px);
   left: 0;
   right: 0;
   background: white;
   border: 1px solid #ddd;
-  border-top: none;
   border-radius: 0 0 5px 5px;
   max-height: 300px;
   overflow-y: auto;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 100%;
 }
 
 .breed-option {

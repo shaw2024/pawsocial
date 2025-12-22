@@ -42,7 +42,13 @@ function Profile({ user, onNavigate, onSignOut }) {
             🐶 Add Your Dog
           </button>
           <div className="menu-item-with-dropdown">
-            <button onClick={() => onNavigate('community')} className="menu-btn">
+            <button 
+              onClick={() => {
+                onNavigate('community');
+                setShowBreedDropdown(false);
+              }} 
+              className="menu-btn"
+            >
               👥 Community
             </button>
             <button 
