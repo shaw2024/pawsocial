@@ -172,6 +172,13 @@ function App() {
     setActivePage('profile');
   };
 
+  const handleNavigate = (page, breed = null) => {
+    if (breed) {
+      setSelectedBreed(breed);
+    }
+    setActivePage(page);
+  };
+
   const handleLike = async (dogId) => {
     try {
       const response = await api.post(`/dogs/${dogId}/like`, { userId: user.id });
@@ -257,7 +264,7 @@ function App() {
   if (activePage === 'profile') {
     return (
       <div className="app">
-        <Profile user={user} onNavigate={setActivePage} onSignOut={handleSignOut} />
+        <Profile user={user} onNavigate={handleNavigate} onSignOut={handleSignOut} />
         {renderBottomNav()}
       </div>
     );

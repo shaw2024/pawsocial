@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Profile.css';
 
 function Profile({ user, onNavigate, onSignOut }) {
+  const [showBreedDropdown, setShowBreedDropdown] = useState(false);
+
+  const dogBreeds = [
+    'Labrador Retriever',
+    'German Shepherd',
+    'Golden Retriever',
+    'Bulldog',
+    'Beagle',
+    'Poodle',
+    'Rottweiler',
+    'Yorkshire Terrier',
+    'Boxer',
+    'Dachshund'
+  ];
+
+  const handleBreedSelect = (breed) => {
+    onNavigate('community', breed);
+    setShowBreedDropdown(false);
+  };
+
   return (
     <div className="profile">
       <header className="profile-header">
@@ -21,9 +41,37 @@ function Profile({ user, onNavigate, onSignOut }) {
           <button onClick={() => onNavigate('add')} className="menu-btn">
             🐶 Add Your Dog
           </button>
-          <button onClick={() => onNavigate('community')} className="menu-btn">
-            👥 Community
-          </button>
+          <div className="menu-item-with-dropdown">
+            <button onClick={() => onNavigate('community')} className="menu-btn">
+              👥 Community
+            </button>
+            <button 
+              onClick={() => setShowBreedDropdown(!showBreedDropdown)}
+              className="dropdown-toggle"
+              title="Filter by breed"
+            >
+              ▼
+            </button>
+            {showBreedDropdown && (
+              <div className="breed-dropdown">
+                <button 
+                  onClick={() => handleBreedSelect('all')}
+                  className="breed-option"
+                >
+                  All Breeds
+                </button>
+                {dogBreeds.map((breed) => (
+                  <button 
+                    key={breed}
+                    onClick={() => handleBreedSelect(breed)}
+                    className="breed-option"
+                  >
+                    {breed}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button onClick={onSignOut} className="menu-btn signout">
             🚪 Sign Out
           </button>
