@@ -258,6 +258,31 @@
   text-decoration: underline;
 }
 
+.signin-contact-footer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.signin-contact-footer p {
+  margin: 0;
+  font-size: 0.85em;
+  color: #999;
+}
+
+.contact-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.contact-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
 @media (max-width: 600px) {
   .signin-card {
     padding: 30px 20px;

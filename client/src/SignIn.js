@@ -163,6 +163,10 @@ function SignIn({ onSignIn }) {
             </button>
           </p>
         </div>
+
+        <div className="signin-contact-footer">
+          <p>Questions? <a href="mailto:support@pawsocial.app" className="contact-link">Contact Us</a></p>
+        </div>
       </div>
 
       {modalType && <TermsModal type={modalType} onClose={() => setModalType(null)} />}
