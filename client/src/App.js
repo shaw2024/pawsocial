@@ -34,6 +34,9 @@ function App() {
   const [selectedBreed, setSelectedBreed] = useState('all');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [savedDogs, setSavedDogs] = useState([]);
+  const [dogImages, setDogImages] = useState({});
+  const [hasMore, setHasMore] = useState(true);
+  const [dogsPage, setDogsPage] = useState(0);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
@@ -55,18 +58,40 @@ function App() {
     if (user) {
       console.log('👤 User logged in:', user.email);
       setActivePage('profile');
-      fetchDogs();
+      setDogsPage(0);
     }
   }, [user]);
 
+  useEffect(() => {
+    if (user && activePage === 'community') {
+      fetchDogs();
+    }
+  }, [user, dogsPage, activePage]);
+
   const fetchDogs = async () => {
     try {
-      const response = await api.get('/dogs/all');
+      const skip = dogsPage * 20;
+      const response = await api.get(`/dogs/all?skip=${skip}&limit=20`);
       console.log('✅ Dogs fetched:', response.data.length);
-      setDogs(response.data);
+      setDogs(dogsPage === 0 ? response.data : [...dogs, ...response.data]);
+      setHasMore(response.data.length === 20);
     } catch (err) {
       console.error('❌ Error fetching dogs:', err.message);
       setMessage('❌ Failed to load dogs. Please refresh the page.');
+    }
+  };
+
+  const loadMoreDogs = async () => {
+    setDogsPage(prev => prev + 1);
+  };
+
+  const fetchDogImage = async (dogId) => {
+    if (dogImages[dogId]) return;
+    try {
+      const response = await api.get(`/dogs/${dogId}/image`);
+      setDogImages(prev => ({ ...prev, [dogId]: response.data[0] }));
+    } catch (err) {
+      console.error('❌ Error fetching image:', err.message);
     }
   };
 
@@ -473,12 +498,12 @@ function App() {
                 {dogs
                   .filter(dog => selectedBreed === 'all' || dog.breed === selectedBreed)
                   .map(dog => (
-                  <div key={dog._id} className="dog-card">
+                  <div key={dog._id} className="dog-card" onMouseEnter={() => fetchDogImage(dog._id)}>
                     <div className="dog-image-container">
-                      {dog.images && dog.images[0] ? (
-                        <img src={dog.images[0]} alt={dog.name} className="dog-image" />
+                      {dogImages[dog._id] ? (
+                        <img src={dogImages[dog._id]} alt={dog.name} className="dog-image" />
                       ) : (
-                        <div className="dog-image-placeholder">📷 No image</div>
+                        <div className="dog-image-placeholder">📷 Loading...</div>
                       )}
                     </div>
                     <div className="dog-card-header">
@@ -543,6 +568,13 @@ function App() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+            {hasMore && dogs.length > 0 && (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <button onClick={loadMoreDogs} className="btn-primary">
+                  Load More Dogs
+                </button>
               </div>
             )}
           </div>

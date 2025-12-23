@@ -81,8 +81,34 @@ app.post('/dogs/create', async (req, res) => {
 
 app.get('/dogs/all', async (req, res) => {
   try {
-    const dogs = await Dog.find().sort({ createdAt: -1 }).limit(50);
+    const skip = parseInt(req.query.skip || 0);
+    const limit = parseInt(req.query.limit || 20);
+    const dogs = await Dog.find()
+      .select('-images')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     res.json(dogs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get dog with images
+app.get('/dogs/:id/full', async (req, res) => {
+  try {
+    const dog = await Dog.findById(req.params.id);
+    res.json(dog);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get only image for a dog
+app.get('/dogs/:id/image', async (req, res) => {
+  try {
+    const dog = await Dog.findById(req.params.id).select('images');
+    res.json(dog?.images || []);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
