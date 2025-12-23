@@ -5,7 +5,7 @@ import Profile from './Profile';
 import './App.css';
 
 // Use production API for GitHub Pages, localhost for development
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000'
   ? 'http://localhost:4000'
   : 'https://pawsocial-api.onrender.com';
 
