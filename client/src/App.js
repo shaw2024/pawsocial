@@ -318,7 +318,7 @@ function App() {
       <header className="header">
         <div className="header-content">
           <div>
-            <h1>🐕 PawSocial</h1>
+            <h1>🐕 PawPawSocial</h1>
             <p>Dog Matching & Community App</p>
           </div>
           <div className="header-right">

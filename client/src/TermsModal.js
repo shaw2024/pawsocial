@@ -12,10 +12,10 @@ function TermsModal({ onClose, type }) {
             <h2>Terms & Conditions</h2>
             <div className="modal-body">
               <h3>1. Acceptance of Terms</h3>
-              <p>By accessing and using PawSocial, you accept and agree to be bound by the terms and provision of this agreement.</p>
+              <p>By accessing and using PawPawSocial, you accept and agree to be bound by the terms and provision of this agreement.</p>
 
               <h3>2. Use License</h3>
-              <p>Permission is granted to temporarily download one copy of the materials (information or software) on PawSocial for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+              <p>Permission is granted to temporarily download one copy of the materials (information or software) on PawPawSocial for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
               <ul>
                 <li>Modify or copy the materials</li>
                 <li>Use the materials for any commercial purpose or for any public display</li>
@@ -24,7 +24,7 @@ function TermsModal({ onClose, type }) {
               </ul>
 
               <h3>3. User Content</h3>
-              <p>You retain all rights to any content you submit, post or display on or through PawSocial. By uploading dog profiles or images, you grant PawSocial a non-exclusive, worldwide, royalty-free license to use such content.</p>
+              <p>You retain all rights to any content you submit, post or display on or through PawPawSocial. By uploading dog profiles or images, you grant PawPawSocial a non-exclusive, worldwide, royalty-free license to use such content.</p>
 
               <h3>4. Prohibited Activities</h3>
               <p>You agree not to:</p>
@@ -36,10 +36,10 @@ function TermsModal({ onClose, type }) {
               </ul>
 
               <h3>5. Disclaimer</h3>
-              <p>The materials on PawSocial are provided on an 'as is' basis. PawSocial makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+              <p>The materials on PawPawSocial are provided on an 'as is' basis. PawPawSocial makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
 
               <h3>6. Limitations</h3>
-              <p>In no event shall PawSocial or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on PawSocial.</p>
+              <p>In no event shall PawPawSocial or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on PawPawSocial.</p>
             </div>
           </>
         ) : (
@@ -47,7 +47,7 @@ function TermsModal({ onClose, type }) {
             <h2>Privacy Policy</h2>
             <div className="modal-body">
               <h3>1. Introduction</h3>
-              <p>PawSocial ("we", "us", or "our") operates the PawSocial application. This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our application.</p>
+              <p>PawPawSocial ("we", "us", or "our") operates the PawPawSocial application. This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our application.</p>
 
               <h3>2. Information Collection and Use</h3>
               <p>We collect several different types of information for various purposes to provide and improve our application:</p>

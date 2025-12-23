@@ -25,7 +25,7 @@ function Profile({ user, onNavigate, onSignOut }) {
   return (
     <div className="profile">
       <header className="profile-header">
-        <h1>🐕 PawSocial Profile</h1>
+        <h1>🐕 PawPawSocial Profile</h1>
         <p>Welcome back, {user.isGuest ? 'Guest' : user.email}!</p>
       </header>
 

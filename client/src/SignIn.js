@@ -58,7 +58,7 @@ function SignIn({ onSignIn }) {
     <div className="signin-container">
       <div className="signin-card">
         <div className="signin-header">
-          <h1>🐾 PawSocial</h1>
+          <h1>🐾 PawPawSocial</h1>
           <p>Connect with amazing dogs near you</p>
         </div>
 
