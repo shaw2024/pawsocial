@@ -545,7 +545,6 @@ function App() {
                     {dog.comments && dog.comments.length > 0 && (
                       <div className="dog-comments">
                         <strong>Comments ({dog.comments.length})</strong>
-      {renderBottomNav()}
                         {dog.comments.map((comment, idx) => (
                           <div key={idx} className="comment">
                             <strong>{comment.userName}:</strong> {comment.text}
