@@ -11,7 +11,7 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 30000
+  timeout: 60000
 });
 
 function App() {
@@ -71,6 +71,17 @@ function App() {
     }
   }, [user, dogsPage, activePage]);
 
+  useEffect(() => {
+    // Preload images for first few dogs on mobile/desktop
+    if (dogs.length > 0) {
+      dogs.slice(0, 3).forEach(dog => {
+        if (!dogImages[dog._id] && dogImages[dog._id] !== null) {
+          fetchDogImage(dog._id);
+        }
+      });
+    }
+  }, [dogs]);
+
   const fetchDogs = async () => {
     try {
       const skip = dogsPage * 20;
@@ -91,10 +102,14 @@ function App() {
   const fetchDogImage = async (dogId) => {
     if (dogImages[dogId]) return;
     try {
-      const response = await api.get(`/dogs/${dogId}/image`);
-      setDogImages(prev => ({ ...prev, [dogId]: response.data[0] }));
+      const response = await api.get(`/dogs/${dogId}/image`, { timeout: 60000 });
+      if (response.data && response.data.length > 0) {
+        setDogImages(prev => ({ ...prev, [dogId]: response.data[0] }));
+      }
     } catch (err) {
       console.error('❌ Error fetching image:', err.message);
+      // Set a placeholder to prevent retrying
+      setDogImages(prev => ({ ...prev, [dogId]: null }));
     }
   };
 
@@ -505,6 +520,8 @@ function App() {
                     <div className="dog-image-container">
                       {dogImages[dog._id] ? (
                         <img src={dogImages[dog._id]} alt={dog.name} className="dog-image" />
+                      ) : dogImages[dog._id] === null ? (
+                        <div className="dog-image-placeholder">📷 No Image</div>
                       ) : (
                         <div className="dog-image-placeholder">📷 Loading...</div>
                       )}
