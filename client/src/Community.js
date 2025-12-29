@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import './Community.css';
 
@@ -43,7 +43,7 @@ function Community({ user }) {
     }
   }, [messages]);
 
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
     try {
       const response = await api.get('/community-rooms');
       setRooms(response.data);
@@ -53,9 +53,9 @@ function Community({ user }) {
     } catch (err) {
       console.error('Error fetching rooms:', err);
     }
-  };
+  }, [selectedRoom]);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     if (!selectedRoom) return;
     try {
       const response = await api.get(`/community-rooms/${selectedRoom}/messages`);
@@ -63,9 +63,9 @@ function Community({ user }) {
     } catch (err) {
       console.error('Error fetching messages:', err);
     }
-  };
+  }, [selectedRoom]);
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = useCallback(async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedRoom) return;
 
@@ -79,14 +79,14 @@ function Community({ user }) {
         text: newMessage
       });
 
-      setMessages([...messages, response.data.userMessage, response.data.aiMessage]);
+      setMessages(prev => [...prev, response.data.userMessage, response.data.aiMessage]);
       setNewMessage('');
     } catch (err) {
       console.error('Error sending message:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [newMessage, selectedRoom, user]);
 
   const currentRoom = rooms.find(r => r._id === selectedRoom);
 
@@ -169,10 +169,9 @@ function Community({ user }) {
               </div>
 
               {/* Input Form */}
-              <form className="message-input-form" onSubmit={handleSendMessage}>
+              <form className="message-form" onSubmit={handleSendMessage}>
                 <input
                   type="text"
-                  className="message-input"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
@@ -181,7 +180,6 @@ function Community({ user }) {
                 />
                 <button
                   type="submit"
-                  className="send-btn"
                   disabled={loading || !newMessage.trim()}
                 >
                   {loading ? '⏳' : '📤'}
