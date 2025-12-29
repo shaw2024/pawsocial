@@ -251,7 +251,9 @@
   }
 
   .message {
-    max-width: 80%;
+    max-width: 75%;
+    padding: 8px 10px;
+    font-size: 0.9em;
   }
 
   .messages-container {
@@ -262,10 +264,24 @@
   }
 
   .message-form {
-    padding: 8px;
+    padding: 12px 10px;
+    gap: 8px;
     flex-shrink: 0;
     width: 100%;
     box-sizing: border-box;
+    margin-bottom: 8px;
+  }
+
+  .message-form input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 20px;
+  }
+
+  .message-form button {
+    padding: 10px 14px;
+    font-size: 0.95em;
+    white-space: nowrap;
   }
 
   .chat-header {
