@@ -90,7 +90,7 @@ function Community({ user }) {
   return (
     <div className="community-container">
       <div className="community-chat">
-        {currentRoom && (
+        {currentRoom ? (
           <>
             <div className="chat-header">
               <div className="header-top">
@@ -160,6 +160,10 @@ function Community({ user }) {
               </button>
             </form>
           </>
+        ) : (
+          <div className="loading-container">
+            <p>Loading chat rooms...</p>
+          </div>
         )}
       </div>
     </div>
