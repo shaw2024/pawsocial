@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SignIn from './SignIn';
 import Profile from './Profile';
+import Community from './Community';
 import './App.css';
 
 // Use production API for GitHub Pages, localhost for development
@@ -364,6 +365,12 @@ function App() {
         >
           Community ({dogs.length})
         </button>
+        <button 
+          className={`tab ${activePage === 'chat-rooms' ? 'active' : ''}`}
+          onClick={() => setActivePage('chat-rooms')}
+        >
+          💬 Chat Rooms
+        </button>
       </div>
 
       <div className="container">
@@ -600,15 +607,23 @@ function App() {
           </div>
         )}
 
-        {expandedImage && (
-          <div className="image-modal" onClick={() => setExpandedImage(null)}>
-            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-              <img src={expandedImage} alt="Expanded" className="expanded-image" />
-              <button className="close-modal" onClick={() => setExpandedImage(null)}>✕</button>
-            </div>
+        {activePage === 'chat-rooms' && (
+          <div className="chat-rooms-section">
+            <Community user={user} />
           </div>
         )}
       </div>
+
+      {expandedImage && (
+        <div className="image-modal" onClick={() => setExpandedImage(null)}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <img src={expandedImage} alt="Expanded" className="expanded-image" />
+            <button className="close-modal" onClick={() => setExpandedImage(null)}>✕</button>
+          </div>
+        </div>
+      )}
+
+      {renderBottomNav()}
     </div>
   );
 }

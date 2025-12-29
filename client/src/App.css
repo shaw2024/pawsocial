@@ -769,6 +769,14 @@
   transform: rotate(90deg);
 }
 
+.chat-rooms-section {
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  margin: 20px;
+  min-height: 500px;
+}
+
 @media (max-width: 600px) {
   .close-modal {
     top: 10px;
@@ -783,3 +791,4 @@
     background: rgba(0, 0, 0, 0.7);
   }
 }
+

@@ -77,8 +77,9 @@ function Profile({ user, onNavigate, onSignOut }) {
                 ))}
               </div>
             )}
-          </div>
-          <button onClick={onSignOut} className="menu-btn signout">
+          </div>          <button onClick={() => onNavigate('chat-rooms')} className="menu-btn">
+            💬 Chat Rooms
+          </button>          <button onClick={onSignOut} className="menu-btn signout">
             🚪 Sign Out
           </button>
         </div>
