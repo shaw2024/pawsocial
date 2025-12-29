@@ -1,7 +1,7 @@
 .community-container {
   display: flex;
   height: 100%;
-  max-height: 100vh;
+  max-height: calc(100vh - 70px);
   background: white;
   border-radius: 10px;
   overflow: hidden;
@@ -208,7 +208,7 @@
   .community-container {
     flex-direction: column;
     height: 100%;
-    max-height: 100vh;
+    max-height: calc(100vh - 140px);
     margin: 0;
     border-radius: 0;
   }
@@ -253,13 +253,15 @@
   }
 
   .community-chat {
-    height: calc(100vh - 12vh - 70px);
+    height: calc(100vh - 200px);
     flex: 1;
     min-height: 0;
+    overflow: hidden;
   }
 
   .chat-header {
-    padding: 12px;
+    padding: 10px 12px;
+    flex-shrink: 0;
   }
 
   .chat-header h2 {
@@ -274,8 +276,11 @@
   }
 
   .messages-container {
-    padding: 10px;
-    gap: 8px;
+    padding: 8px 8px;
+    gap: 6px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .message {
@@ -295,8 +300,9 @@
   }
 
   .message-form {
-    padding: 10px;
-    gap: 8px;
+    padding: 8px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .message-form input {
@@ -320,13 +326,13 @@
 @media (max-width: 480px) {
   .community-container {
     height: 100%;
-    max-height: 100vh;
+    max-height: calc(100vh - 140px);
   }
 
   .community-sidebar {
     max-height: 15vh;
-    min-height: 65px;
-    padding: 8px;
+    min-height: 60px;
+    padding: 6px;
     flex-shrink: 0;
   }
 
