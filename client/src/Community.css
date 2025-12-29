@@ -8,6 +8,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 .community-sidebar {
@@ -385,14 +386,18 @@
   }
 
   .messages-container {
-    padding: 8px;
+    padding: 8px 6px;
     gap: 6px;
     width: 100%;
     box-sizing: border-box;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    background: #fafafa;
   }
 
   .message {
-    max-width: 92%;
+    max-width: 95%;
     padding: 8px 10px;
     font-size: 0.85em;
     border-radius: 8px;
@@ -409,11 +414,12 @@
   }
 
   .message-form {
-    padding: 8px;
+    padding: 6px 8px;
     gap: 6px;
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
+    display: flex;
   }
 
   .message-form input {
