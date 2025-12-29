@@ -18,6 +18,7 @@ function Community({ user }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -89,7 +90,7 @@ function Community({ user }) {
   return (
     <div className="community-wrapper">
       <div className="community-container">
-        {/* Room Selection - Horizontal Scrollable on Mobile */}
+        {/* Room Selection - Horizontal Scrollable on Mobile - Hidden on Mobile */}
         <div className="room-selector">
           <div className="rooms-scroll">
             {rooms.map(room => (
@@ -112,7 +113,33 @@ function Community({ user }) {
             <>
               {/* Header */}
               <div className="chat-header">
-                <h2>{currentRoom.name}</h2>
+                <div className="header-top">
+                  <h2>{currentRoom.name}</h2>
+                  <div className="topic-dropdown">
+                    <button 
+                      className="topic-dropdown-btn"
+                      onClick={() => setShowDropdown(!showDropdown)}
+                    >
+                      {currentRoom.topic} ▼
+                    </button>
+                    {showDropdown && (
+                      <div className="topic-dropdown-menu">
+                        {rooms.map(room => (
+                          <button
+                            key={room._id}
+                            className={`topic-option ${selectedRoom === room._id ? 'active' : ''}`}
+                            onClick={() => {
+                              setSelectedRoom(room._id);
+                              setShowDropdown(false);
+                            }}
+                          >
+                            {room.name} - {room.topic}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <p>{currentRoom.description}</p>
               </div>
 
