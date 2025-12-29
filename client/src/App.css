@@ -777,6 +777,23 @@
   min-height: 500px;
 }
 
+@media (max-width: 768px) {
+  .chat-rooms-section {
+    padding: 10px;
+    margin: 10px;
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-rooms-section {
+    padding: 5px;
+    margin: 5px;
+    min-height: 350px;
+    border-radius: 5px;
+  }
+}
+
 @media (max-width: 600px) {
   .close-modal {
     top: 10px;
