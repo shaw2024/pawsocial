@@ -6,6 +6,8 @@
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .community-sidebar {
@@ -211,6 +213,8 @@
     max-height: calc(100vh - 140px);
     margin: 0;
     border-radius: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .community-sidebar {
@@ -220,8 +224,7 @@
     max-height: 12vh;
     min-height: 70px;
     padding: 10px;
-    flex-shrink: 0;
-  }
+    flex-shrink: 0;    box-sizing: border-box;  }
 
   .community-sidebar h2 {
     margin-top: 0;
@@ -257,6 +260,8 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .chat-header {
@@ -328,13 +333,20 @@
   .community-container {
     height: 100%;
     max-height: calc(100vh - 140px);
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
   }
 
   .community-sidebar {
-    max-height: 16vh;
-    min-height: 70px;
+    max-height: 14vh;
+    min-height: 65px;
     padding: 10px;
     flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .community-sidebar h2 {
@@ -356,10 +368,16 @@
   .community-chat {
     flex: 1;
     min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .chat-header {
     padding: 10px;
+    flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .chat-header h2 {
@@ -369,6 +387,8 @@
   .messages-container {
     padding: 8px;
     gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .message {
@@ -391,6 +411,9 @@
   .message-form {
     padding: 8px;
     gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
   }
 
   .message-form input {
@@ -402,5 +425,6 @@
   .message-form button {
     padding: 8px 12px;
     font-size: 0.9em;
+    flex-shrink: 0;
   }
 }
