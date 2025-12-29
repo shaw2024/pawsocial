@@ -9,70 +9,116 @@
 }
 
 .community-sidebar {
-  width: 280px;
-  background: #f9f9f9;
-  border-right: 2px solid #e0e0e0;
-  padding: 20px;
-  overflow-y: auto;
+  display: none;
 }
 
 .community-sidebar h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 1.3em;
+  display: none;
 }
 
 .rooms-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: none;
 }
 
 .room-item {
-  background: white;
-  border: 2px solid #e0e0e0;
-  padding: 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
-  font-size: 0.95em;
-}
-
-.room-item:hover {
-  border-color: #667eea;
-  background: #f0f0ff;
-}
-
-.room-item.active {
-  background: #667eea;
-  border-color: #667eea;
-  color: white;
+  display: none;
 }
 
 .room-name {
-  font-weight: 600;
-  margin-bottom: 4px;
+  display: none;
 }
 
 .room-topic {
-  font-size: 0.85em;
-  opacity: 0.7;
-}
-
-.community-chat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
+  display: none;
 }
 
 .chat-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 20px;
+  padding: 15px 20px;
   border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.room-dropdown-container {
+  position: relative;
+}
+
+.room-dropdown-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.room-dropdown-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.room-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 250px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 5px;
+}
+
+.dropdown-room-item {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  background: white;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-room-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-room-item:hover {
+  background: #f5f5f5;
+}
+
+.dropdown-room-item.active {
+  background: #e8e8ff;
+  border-left: 3px solid #667eea;
+  padding-left: 12px;
+}
+
+.dropdown-room-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 3px;
+  font-size: 0.95em;
+}
+
+.dropdown-room-topic {
+  font-size: 0.8em;
+  color: #999;
 }
 
 .chat-header h2 {
@@ -211,16 +257,12 @@
     max-height: 100vh;
     margin: 0;
     border-radius: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .community-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 2px solid #e0e0e0;
-    max-height: 12vh;
-    min-height: 70px;
-    padding: 10px;
-    flex-shrink: 0;
+    display: none;
   }
 
   .community-sidebar h2 {
@@ -260,6 +302,24 @@
 
   .chat-header {
     padding: 12px;
+    position: relative;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .room-dropdown-btn {
+    font-size: 0.85em;
+    padding: 6px 10px;
+  }
+
+  .room-dropdown-menu {
+    max-height: 300px;
+    min-width: 200px;
   }
 
   .chat-header h2 {
@@ -279,7 +339,7 @@
   }
 
   .message {
-    max-width: 90%;
+    max-width: 95%;
     padding: 10px 12px;
     font-size: 0.9em;
   }
@@ -321,18 +381,25 @@
   .community-container {
     height: 100%;
     max-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 
   .community-sidebar {
     max-height: 15vh;
-    min-height: 65px;
+    min-height: 60px;
     padding: 8px;
     flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .community-sidebar h2 {
     font-size: 1em;
     margin-bottom: 8px;
+    margin-top: 0;
   }
 
   .rooms-list {
@@ -340,7 +407,7 @@
   }
 
   .room-item {
-    min-width: 160px;
+    min-width: 140px;
     padding: 8px;
     font-size: 0.8em;
   }
@@ -348,10 +415,15 @@
   .community-chat {
     flex: 1;
     min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
   }
 
   .chat-header {
     padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .chat-header h2 {
@@ -359,12 +431,14 @@
   }
 
   .messages-container {
-    padding: 8px;
+    padding: 6px 4px;
     gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .message {
-    max-width: 92%;
+    max-width: 96%;
     padding: 8px 10px;
     font-size: 0.85em;
     border-radius: 8px;
@@ -381,18 +455,24 @@
   }
 
   .message-form {
-    padding: 8px;
+    padding: 6px;
     gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-shrink: 0;
   }
 
   .message-form input {
     padding: 8px;
     font-size: 14px;
     border-radius: 18px;
+    flex: 1;
   }
 
   .message-form button {
-    padding: 8px 12px;
+    padding: 8px 10px;
     font-size: 0.9em;
+    flex-shrink: 0;
   }
 }
