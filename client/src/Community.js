@@ -27,7 +27,7 @@ function Community({ user }) {
   useEffect(() => {
     if (selectedRoom) {
       fetchMessages();
-      const interval = setInterval(fetchMessages, 3000); // Poll for new messages every 3s
+      const interval = setInterval(fetchMessages, 3000);
       return () => clearInterval(interval);
     }
   }, [selectedRoom]);
@@ -87,67 +87,79 @@ function Community({ user }) {
   const currentRoom = rooms.find(r => r._id === selectedRoom);
 
   return (
-    <div className="community-container">
-      <div className="community-sidebar">
-        <h2>Community Rooms</h2>
-        <div className="rooms-list">
-          {rooms.map(room => (
-            <button
-              key={room._id}
-              className={`room-item ${selectedRoom === room._id ? 'active' : ''}`}
-              onClick={() => setSelectedRoom(room._id)}
-              title={room.description}
-            >
-              <div className="room-name">{room.name}</div>
-              <div className="room-topic">{room.topic}</div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="community-chat">
-        {currentRoom && (
-          <>
-            <div className="chat-header">
-              <h2>{currentRoom.name}</h2>
-              <p>{currentRoom.description}</p>
-            </div>
-
-            <div className="messages-container">
-              {messages.length === 0 ? (
-                <div className="no-messages">
-                  <p>No messages yet. Be the first to start a conversation! 💬</p>
-                </div>
-              ) : (
-                messages.map((msg, idx) => (
-                  <div key={idx} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
-                    <div className="message-header">
-                      <strong>{msg.userName}</strong>
-                      <span className="message-time">
-                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                    <div className="message-text">{msg.text}</div>
-                  </div>
-                ))
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <form className="message-form" onSubmit={handleSendMessage}>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Ask a question or share your thoughts..."
-                disabled={loading}
-              />
-              <button type="submit" disabled={loading || !newMessage.trim()}>
-                {loading ? '⏳' : '📤'} Send
+    <div className="community-wrapper">
+      <div className="community-container">
+        {/* Room Selection - Horizontal Scrollable on Mobile */}
+        <div className="room-selector">
+          <div className="rooms-scroll">
+            {rooms.map(room => (
+              <button
+                key={room._id}
+                className={`room-btn ${selectedRoom === room._id ? 'active' : ''}`}
+                onClick={() => setSelectedRoom(room._id)}
+                title={room.description}
+              >
+                <div className="room-name">{room.name}</div>
+                <div className="room-topic">{room.topic}</div>
               </button>
-            </form>
-          </>
-        )}
+            ))}
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="chat-area">
+          {currentRoom && (
+            <>
+              {/* Header */}
+              <div className="chat-header">
+                <h2>{currentRoom.name}</h2>
+                <p>{currentRoom.description}</p>
+              </div>
+
+              {/* Messages */}
+              <div className="messages-container">
+                {messages.length === 0 ? (
+                  <div className="no-messages">
+                    <p>💬 No messages yet. Be the first to start a conversation!</p>
+                  </div>
+                ) : (
+                  messages.map((msg, idx) => (
+                    <div key={idx} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
+                      <div className="message-meta">
+                        <span className="message-sender">{msg.userName}</span>
+                        <span className="message-time">
+                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div className="message-content">{msg.text}</div>
+                    </div>
+                  ))
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input Form */}
+              <form className="message-input-form" onSubmit={handleSendMessage}>
+                <input
+                  type="text"
+                  className="message-input"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type a message..."
+                  disabled={loading}
+                  autoComplete="off"
+                />
+                <button
+                  type="submit"
+                  className="send-btn"
+                  disabled={loading || !newMessage.trim()}
+                >
+                  {loading ? '⏳' : '📤'}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
