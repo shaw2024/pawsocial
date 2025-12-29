@@ -20,6 +20,8 @@ function Community({ user }) {
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const hasUserSentMessage = useRef(false);
 
   useEffect(() => {
     fetchRooms();
@@ -34,12 +36,12 @@ function Community({ user }) {
   }, [selectedRoom]);
 
   useEffect(() => {
-    scrollToBottom();
+    // Only auto-scroll if user just sent a message
+    if (hasUserSentMessage.current && messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      hasUserSentMessage.current = false;
+    }
   }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const fetchRooms = async () => {
     try {
@@ -68,6 +70,7 @@ function Community({ user }) {
     if (!newMessage.trim() || !selectedRoom) return;
 
     setLoading(true);
+    hasUserSentMessage.current = true;
     try {
       const response = await api.post(`/community-rooms/${selectedRoom}/message`, {
         userId: user.id,
@@ -144,7 +147,7 @@ function Community({ user }) {
               </div>
 
               {/* Messages */}
-              <div className="messages-container">
+              <div className="messages-container" ref={messagesContainerRef}>
                 {messages.length === 0 ? (
                   <div className="no-messages">
                     <p>💬 No messages yet. Be the first to start a conversation!</p>
