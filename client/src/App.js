@@ -40,6 +40,7 @@ function App() {
   const [dogImages, setDogImages] = useState({});
   const [hasMore, setHasMore] = useState(true);
   const [dogsPage, setDogsPage] = useState(0);
+  const [expandedImage, setExpandedImage] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
@@ -517,7 +518,7 @@ function App() {
                   .filter(dog => selectedBreed === 'all' || dog.breed === selectedBreed)
                   .map(dog => (
                   <div key={dog._id} className="dog-card" onMouseEnter={() => fetchDogImage(dog._id)}>
-                    <div className="dog-image-container">
+                    <div className="dog-image-container" onClick={() => dogImages[dog._id] && setExpandedImage(dogImages[dog._id])}>
                       {dogImages[dog._id] ? (
                         <img src={dogImages[dog._id]} alt={dog.name} className="dog-image" />
                       ) : dogImages[dog._id] === null ? (
@@ -596,6 +597,15 @@ function App() {
                 </button>
               </div>
             )}
+          </div>
+        )}
+
+        {expandedImage && (
+          <div className="image-modal" onClick={() => setExpandedImage(null)}>
+            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+              <img src={expandedImage} alt="Expanded" className="expanded-image" />
+              <button className="close-modal" onClick={() => setExpandedImage(null)}>✕</button>
+            </div>
           </div>
         )}
       </div>
