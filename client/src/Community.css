@@ -468,16 +468,66 @@
 
 /* Desktop Breakpoint */
 @media (min-width: 769px) {
+  .community-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+
   .community-container {
     flex-direction: row;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin: 10px;
-    max-height: calc(100vh - 90px);
+    max-height: calc(100vh - 100px);
+    height: auto;
+  }
+
+  .room-selector {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    flex-shrink: 0;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: none;
+    padding: 0;
+    overflow: hidden;
+    background: #f9f9f9;
+  }
+
+  .rooms-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .room-btn {
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    min-height: 70px;
+  }
+
+  .room-btn:first-child {
+    border-left: 1px solid transparent;
   }
 
   .room-selector-modal {
     display: none;
+  }
+
+  .chat-area {
+    flex: 1;
+    min-width: 0;
   }
 
   .chat-header {
