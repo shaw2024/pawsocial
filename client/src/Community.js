@@ -18,7 +18,6 @@ function Community({ user }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showRoomDropdown, setShowRoomDropdown] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -89,40 +88,28 @@ function Community({ user }) {
 
   return (
     <div className="community-container">
+      <div className="community-sidebar">
+        <h2>Community Rooms</h2>
+        <div className="rooms-list">
+          {rooms.map(room => (
+            <button
+              key={room._id}
+              className={`room-item ${selectedRoom === room._id ? 'active' : ''}`}
+              onClick={() => setSelectedRoom(room._id)}
+              title={room.description}
+            >
+              <div className="room-name">{room.name}</div>
+              <div className="room-topic">{room.topic}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="community-chat">
-        {currentRoom ? (
+        {currentRoom && (
           <>
             <div className="chat-header">
-              <div className="header-top">
-                <h2>{currentRoom.name}</h2>
-                <div className="room-dropdown-container">
-                  <button 
-                    className="room-dropdown-btn"
-                    onClick={() => setShowRoomDropdown(!showRoomDropdown)}
-                    title="Select a different room"
-                  >
-                    💬 {rooms.length} Rooms ▼
-                  </button>
-                  {showRoomDropdown && (
-                    <div className="room-dropdown-menu">
-                      {rooms.map(room => (
-                        <button
-                          key={room._id}
-                          className={`dropdown-room-item ${selectedRoom === room._id ? 'active' : ''}`}
-                          onClick={() => {
-                            setSelectedRoom(room._id);
-                            setShowRoomDropdown(false);
-                          }}
-                          title={room.description}
-                        >
-                          <div className="dropdown-room-name">{room.name}</div>
-                          <div className="dropdown-room-topic">{room.topic}</div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <h2>{currentRoom.name}</h2>
               <p>{currentRoom.description}</p>
             </div>
 
@@ -160,10 +147,6 @@ function Community({ user }) {
               </button>
             </form>
           </>
-        ) : (
-          <div className="loading-container">
-            <p>Loading chat rooms...</p>
-          </div>
         )}
       </div>
     </div>
