@@ -1,14 +1,11 @@
 .community-container {
   display: flex;
   height: 100%;
-  max-height: calc(100vh - 70px);
+  max-height: 100vh;
   background: white;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
 }
 
 .community-sidebar {
@@ -211,11 +208,9 @@
   .community-container {
     flex-direction: column;
     height: 100%;
-    max-height: calc(100vh - 140px);
+    max-height: 100vh;
     margin: 0;
     border-radius: 0;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .community-sidebar {
@@ -225,7 +220,8 @@
     max-height: 12vh;
     min-height: 70px;
     padding: 10px;
-    flex-shrink: 0;    box-sizing: border-box;  }
+    flex-shrink: 0;
+  }
 
   .community-sidebar h2 {
     margin-top: 0;
@@ -257,21 +253,17 @@
   }
 
   .community-chat {
-    height: calc(100vh - 200px);
+    height: calc(100vh - 12vh - 70px);
     flex: 1;
     min-height: 0;
-    overflow: hidden;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .chat-header {
-    padding: 12px 15px;
-    flex-shrink: 0;
+    padding: 12px;
   }
 
   .chat-header h2 {
-    font-size: 1.2em;
+    font-size: 1.1em;
     margin: 0;
   }
 
@@ -282,46 +274,41 @@
   }
 
   .messages-container {
-    padding: 12px 10px;
+    padding: 10px;
     gap: 8px;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
   }
 
   .message {
-    max-width: 88%;
-    padding: 10px 14px;
-    font-size: 0.95em;
+    max-width: 90%;
+    padding: 10px 12px;
+    font-size: 0.9em;
   }
 
   .message-header {
-    font-size: 0.85em;
+    font-size: 0.8em;
     margin-bottom: 4px;
   }
 
   .message-text {
-    font-size: 0.95em;
-    line-height: 1.4;
+    font-size: 0.9em;
+    line-height: 1.3;
   }
 
   .message-form {
-    padding: 10px 12px;
+    padding: 10px;
     gap: 8px;
-    flex-shrink: 0;
   }
 
   .message-form input {
-    padding: 10px 12px;
+    padding: 10px;
     font-size: 16px;
     border-radius: 20px;
   }
 
   .message-form button {
-    padding: 10px 16px;
-    font-size: 1em;
+    padding: 10px 15px;
+    font-size: 0.95em;
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .no-messages {
@@ -333,52 +320,38 @@
 @media (max-width: 480px) {
   .community-container {
     height: 100%;
-    max-height: calc(100vh - 140px);
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 0;
-    margin: 0;
-    padding: 0;
+    max-height: 100vh;
   }
 
   .community-sidebar {
-    max-height: 14vh;
+    max-height: 15vh;
     min-height: 65px;
-    padding: 10px;
+    padding: 8px;
     flex-shrink: 0;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .community-sidebar h2 {
-    font-size: 1.05em;
-    margin-top: 0;
+    font-size: 1em;
     margin-bottom: 8px;
   }
 
   .rooms-list {
-    gap: 8px;
+    gap: 6px;
   }
 
   .room-item {
-    min-width: 150px;
-    padding: 9px 11px;
-    font-size: 0.85em;
+    min-width: 160px;
+    padding: 8px;
+    font-size: 0.8em;
   }
 
   .community-chat {
     flex: 1;
     min-height: 0;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
   }
 
   .chat-header {
     padding: 10px;
-    flex-shrink: 0;
-    width: 100%;
-    box-sizing: border-box;
   }
 
   .chat-header h2 {
@@ -386,18 +359,12 @@
   }
 
   .messages-container {
-    padding: 8px 6px;
+    padding: 8px;
     gap: 6px;
-    width: 100%;
-    box-sizing: border-box;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    background: #fafafa;
   }
 
   .message {
-    max-width: 95%;
+    max-width: 92%;
     padding: 8px 10px;
     font-size: 0.85em;
     border-radius: 8px;
@@ -414,12 +381,8 @@
   }
 
   .message-form {
-    padding: 6px 8px;
+    padding: 8px;
     gap: 6px;
-    width: 100%;
-    box-sizing: border-box;
-    flex-shrink: 0;
-    display: flex;
   }
 
   .message-form input {
@@ -431,6 +394,5 @@
   .message-form button {
     padding: 8px 12px;
     font-size: 0.9em;
-    flex-shrink: 0;
   }
 }
