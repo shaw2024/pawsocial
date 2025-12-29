@@ -42,6 +42,8 @@ function App() {
   const [hasMore, setHasMore] = useState(true);
   const [dogsPage, setDogsPage] = useState(0);
   const [expandedImage, setExpandedImage] = useState(null);
+  const [imageLoadErrors, setImageLoadErrors] = useState({});
+  const [imageRetries, setImageRetries] = useState({});
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
@@ -77,7 +79,7 @@ function App() {
     // Preload images for first few dogs on mobile/desktop
     if (dogs.length > 0) {
       dogs.slice(0, 3).forEach(dog => {
-        if (!dogImages[dog._id] && dogImages[dog._id] !== null) {
+        if (dogImages[dog._id] === undefined) {
           fetchDogImage(dog._id);
         }
       });
@@ -102,16 +104,38 @@ function App() {
   };
 
   const fetchDogImage = async (dogId) => {
+    // Skip if image is already loaded
     if (dogImages[dogId]) return;
+    // Skip if error was encountered and max retries reached
+    if (dogImages[dogId] === null && imageRetries[dogId] >= 2) return;
+    
     try {
-      const response = await api.get(`/dogs/${dogId}/image`, { timeout: 60000 });
+      const response = await api.get(`/dogs/${dogId}/image`, { timeout: 10000 });
       if (response.data && response.data.length > 0) {
-        setDogImages(prev => ({ ...prev, [dogId]: response.data[0] }));
+        const imageData = response.data[0];
+        // Verify image data is valid
+        if (typeof imageData === 'string' && imageData.length > 0) {
+          setDogImages(prev => ({ ...prev, [dogId]: imageData }));
+          setImageLoadErrors(prev => ({ ...prev, [dogId]: false }));
+        } else {
+          throw new Error('Invalid image data');
+        }
+      } else {
+        setDogImages(prev => ({ ...prev, [dogId]: null }));
       }
     } catch (err) {
-      console.error('❌ Error fetching image:', err.message);
-      // Set a placeholder to prevent retrying
-      setDogImages(prev => ({ ...prev, [dogId]: null }));
+      console.error(`❌ Error fetching image for dog ${dogId}:`, err.message);
+      setImageLoadErrors(prev => ({ ...prev, [dogId]: true }));
+      
+      // Retry up to 2 times
+      const retryCount = imageRetries[dogId] || 0;
+      if (retryCount < 2) {
+        setImageRetries(prev => ({ ...prev, [dogId]: retryCount + 1 }));
+        // Retry after delay
+        setTimeout(() => fetchDogImage(dogId), 2000 + retryCount * 1000);
+      } else {
+        setDogImages(prev => ({ ...prev, [dogId]: null }));
+      }
     }
   };
 
@@ -119,16 +143,28 @@ function App() {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setMessage('❌ Please select a valid image file');
+      return;
+    }
+
     if (file.size > 2 * 1024 * 1024) {
       setMessage('❌ Image must be less than 2MB');
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = () => {
-      setImage(reader.result);
-      setImagePreview(reader.result);
-      setMessage('');
+    reader.onload = (event) => {
+      const result = event.target.result;
+      // Validate that the data URL is properly formed
+      if (result && result.startsWith('data:image/')) {
+        setImage(result);
+        setImagePreview(result);
+        setMessage('');
+      } else {
+        setMessage('❌ Invalid image file');
+      }
     };
     reader.onerror = () => {
       setMessage('❌ Failed to read image');
@@ -527,9 +563,37 @@ function App() {
                   <div key={dog._id} className="dog-card" onMouseEnter={() => fetchDogImage(dog._id)}>
                     <div className="dog-image-container" onClick={() => dogImages[dog._id] && setExpandedImage(dogImages[dog._id])}>
                       {dogImages[dog._id] ? (
-                        <img src={dogImages[dog._id]} alt={dog.name} className="dog-image" />
+                        <img 
+                          src={dogImages[dog._id]} 
+                          alt={dog.name} 
+                          className="dog-image"
+                          onError={(e) => {
+                            console.error(`Image failed to load for dog: ${dog.name}`);
+                            setDogImages(prev => ({ ...prev, [dog._id]: null }));
+                            setImageLoadErrors(prev => ({ ...prev, [dog._id]: true }));
+                          }}
+                        />
                       ) : dogImages[dog._id] === null ? (
-                        <div className="dog-image-placeholder">📷 No Image</div>
+                        <div className="dog-image-placeholder">
+                          {imageLoadErrors[dog._id] ? (
+                            <div className="image-error">
+                              <div>❌ Image Error</div>
+                              <button 
+                                className="retry-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setImageRetries(prev => ({ ...prev, [dog._id]: 0 }));
+                                  setDogImages(prev => ({ ...prev, [dog._id]: undefined }));
+                                  fetchDogImage(dog._id);
+                                }}
+                              >
+                                Retry
+                              </button>
+                            </div>
+                          ) : (
+                            <div>📷 No Image</div>
+                          )}
+                        </div>
                       ) : (
                         <div className="dog-image-placeholder">📷 Loading...</div>
                       )}

@@ -233,6 +233,15 @@ app.post('/dogs/create', async (req, res) => {
   try {
     const { name, breed, age, gender, energy, temperament, vaccinated, images, city, zip, userId } = req.body;
     
+    // Validate images
+    const validImages = images && images.length > 0 
+      ? images.filter(img => typeof img === 'string' && img.length > 100) // Ensure valid base64
+      : [];
+    
+    if (validImages.length === 0 && images && images.length > 0) {
+      return res.status(400).json({ error: 'Invalid image data. Please upload a valid image.' });
+    }
+    
     const dog = new Dog({
       name,
       breed,
@@ -241,7 +250,7 @@ app.post('/dogs/create', async (req, res) => {
       energy,
       temperament: temperament || [],
       vaccinated,
-      images: images || [],
+      images: validImages || [],
       city,
       zip,
       userId,
@@ -286,8 +295,17 @@ app.get('/dogs/:id/full', async (req, res) => {
 app.get('/dogs/:id/image', async (req, res) => {
   try {
     const dog = await Dog.findById(req.params.id).select('images');
-    res.json(dog?.images || []);
+    
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
+    
+    // Filter and return only valid images
+    const validImages = dog?.images?.filter(img => typeof img === 'string' && img.length > 100) || [];
+    
+    res.json(validImages);
   } catch (err) {
+    console.error('Error fetching image:', err);
     res.status(500).json({ error: err.message });
   }
 });
