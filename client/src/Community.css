@@ -22,20 +22,23 @@
 
 /* Custom scrollbar for rooms - webkit browsers */
 .rooms-scroll::-webkit-scrollbar {
-  height: 6px;
+  height: 8px;
 }
 
 .rooms-scroll::-webkit-scrollbar-track {
-  background: #f5f5f5;
+  background: transparent;
 }
 
 .rooms-scroll::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
-  border-radius: 3px;
+  background: #999;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .rooms-scroll::-webkit-scrollbar-thumb:hover {
-  background: #b0b0b0;
+  background: #666;
+  background-clip: padding-box;
 }
 
 .room-btn {
@@ -333,22 +336,23 @@
 
 /* Custom scrollbar styling */
 .messages-container::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .messages-container::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 4px;
+  background: transparent;
 }
 
 .messages-container::-webkit-scrollbar-thumb {
   background: #667eea;
-  border-radius: 4px;
-  transition: background 0.3s ease;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: #764ba2;
+  background-clip: padding-box;
 }
 
 /* Loading Spinner */
