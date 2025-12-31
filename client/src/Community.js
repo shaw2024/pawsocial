@@ -61,6 +61,7 @@ function Community({ user }) {
         setMeetups(response.data);
       } catch (err) {
         console.error('Error fetching meetups:', err);
+        setMeetups([]);
       }
     };
 
@@ -112,21 +113,24 @@ function Community({ user }) {
 
     setLoading(true);
     try {
-      await api.post('/meetups/create', {
+      const response = await api.post('/meetups/create', {
         ...meetupForm,
         userId: user.id,
         userName: user.email.split('@')[0],
         userEmail: user.email
       });
+      console.log('Meetup created:', response.data);
 
       setMeetupForm({ title: '', description: '', date: '', location: '', city: '' });
       setShowMeetupForm(false);
 
-      const response = await api.get('/meetups');
-      setMeetups(response.data);
+      const meetupsResponse = await api.get('/meetups');
+      console.log('Meetups fetched:', meetupsResponse.data);
+      setMeetups(meetupsResponse.data);
+      alert('Meetup created successfully!');
     } catch (err) {
-      console.error('Error creating meetup:', err);
-      alert('Failed to create meetup');
+      console.error('Error creating meetup:', err.response?.data || err.message);
+      alert('Failed to create meetup: ' + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
@@ -134,14 +138,16 @@ function Community({ user }) {
 
   const handleJoinMeetup = async (meetupId) => {
     try {
-      await api.post(`/meetups/${meetupId}/join`, {
+      const response = await api.post(`/meetups/${meetupId}/join`, {
         userId: user.id
       });
+      console.log('Joined meetup:', response.data);
 
-      const response = await api.get('/meetups');
-      setMeetups(response.data);
+      const meetupsResponse = await api.get('/meetups');
+      setMeetups(meetupsResponse.data);
     } catch (err) {
-      console.error('Error joining meetup:', err);
+      console.error('Error joining meetup:', err.response?.data || err.message);
+      alert('Failed to join meetup: ' + (err.response?.data?.error || err.message));
     }
   };
 
