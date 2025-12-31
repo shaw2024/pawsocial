@@ -443,120 +443,157 @@
 
 /* Landscape orientation on mobile */
 @media (max-height: 500px) and (max-width: 900px) {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
   .community-main {
     height: calc(100vh - 70px);
+    width: 100vw;
+    overflow: hidden;
   }
 
   .room-list {
-    height: 40px;
-    max-height: 40px;
+    height: 35px;
+    max-height: 35px;
+    padding: 0;
   }
 
   .room-btn {
-    padding: 6px 10px;
-    font-size: 11px;
-    min-width: 100px;
+    padding: 5px 8px;
+    font-size: 10px;
+    min-width: 90px;
+    height: 35px;
+  }
+
+  .chat-box {
+    overflow: hidden;
   }
 
   .chat-header {
-    padding: 10px 12px;
+    padding: 8px 10px;
+    flex-shrink: 0;
+  }
+
+  .header-top {
+    gap: 4px;
   }
 
   .chat-header h2 {
-    font-size: 14px;
+    font-size: 13px;
+    margin: 0;
   }
 
   .chat-header p {
-    font-size: 11px;
+    font-size: 10px;
     margin: 1px 0 0 0;
+    display: none;
   }
 
   .create-meetup-btn {
-    padding: 4px 8px;
-    font-size: 10px;
+    padding: 3px 6px;
+    font-size: 9px;
   }
 
   .meetup-form {
-    padding: 8px 12px;
-    gap: 6px;
-    max-height: 120px;
+    padding: 6px 8px;
+    gap: 4px;
+    max-height: 80px;
+    overflow-y: auto;
   }
 
   .meetup-form input,
   .meetup-form textarea {
-    padding: 6px;
-    font-size: 12px;
+    padding: 4px 6px;
+    font-size: 11px;
+    margin: 0;
   }
 
   .meetup-form button {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 4px 8px;
+    font-size: 11px;
   }
 
   .meetups-list {
-    padding: 8px 12px;
-    max-height: 120px;
-    gap: 6px;
-  }
-
-  .meetup-card {
-    padding: 8px;
-    font-size: 11px;
-  }
-
-  .meetup-card h4 {
-    font-size: 12px;
-    margin-bottom: 4px;
-  }
-
-  .meetup-card p {
-    margin: 2px 0;
-    font-size: 11px;
-  }
-
-  .join-btn {
-    margin-top: 4px;
-    padding: 4px 8px;
-    font-size: 10px;
-  }
-
-  .messages-box {
-    padding: 8px 12px;
-    gap: 8px;
-  }
-
-  .msg {
     padding: 6px 8px;
-    max-width: 90%;
-  }
-
-  .msg strong {
-    font-size: 10px;
-    margin-bottom: 2px;
-  }
-
-  .msg p {
-    font-size: 12px;
-    line-height: 1.3;
-  }
-
-  .msg small {
-    font-size: 9px;
-    margin-top: 2px;
-  }
-
-  .msg-input {
-    padding: 8px 12px 10px 12px;
+    max-height: 80px;
     gap: 4px;
   }
 
+  .meetup-card {
+    padding: 6px;
+    font-size: 10px;
+    margin: 0;
+  }
+
+  .meetup-card h4 {
+    font-size: 11px;
+    margin: 0 0 3px 0;
+  }
+
+  .meetup-card p {
+    margin: 1px 0;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .join-btn {
+    margin-top: 3px;
+    padding: 3px 6px;
+    font-size: 9px;
+  }
+
+  .messages-box {
+    padding: 6px 8px;
+    gap: 6px;
+    overflow-y: auto;
+  }
+
+  .msg {
+    padding: 4px 6px;
+    max-width: 92%;
+    font-size: 11px;
+  }
+
+  .msg strong {
+    font-size: 9px;
+    margin: 0 0 1px 0;
+    display: block;
+  }
+
+  .msg p {
+    font-size: 11px;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .msg small {
+    font-size: 8px;
+    margin-top: 1px;
+  }
+
+  .msg-input {
+    padding: 6px 8px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
   .msg-input input {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 5px 8px;
+    font-size: 11px;
+    border-radius: 14px;
   }
 
   .msg-input button {
-    padding: 6px 10px;
-    font-size: 11px;
+    padding: 5px 8px;
+    font-size: 10px;
+    border-radius: 14px;
+    min-width: 50px;
   }
 }
