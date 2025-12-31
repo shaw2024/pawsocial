@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Community.css';
 
@@ -18,56 +18,41 @@ function Community({ user }) {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  const messagesContainerRef = useRef(null);
-
-  // Auto-scroll to bottom when new messages arrive
-  const scrollToBottom = useCallback(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
-
-  // Fetch rooms on mount
-  useEffect(() => {
-    fetchRooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Fetch messages when room changes
-  useEffect(() => {
-    if (selectedRoom) {
-      fetchMessages();
-      const interval = setInterval(fetchMessages, 3000);
-      return () => clearInterval(interval);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRoom]);
-
-  const fetchRooms = async () => {
-    try {
-      const response = await api.get('/community-rooms');
-      setRooms(response.data);
-      if (response.data.length > 0 && !selectedRoom) {
-        setSelectedRoom(response.data[0]._id);
+    const fetchRooms = async () => {
+      try {
+        const response = await api.get('/community-rooms');
+        setRooms(response.data);
+        if (response.data.length > 0) {
+          setSelectedRoom(response.data[0]._id);
+        }
+      } catch (err) {
+        console.error('Error fetching rooms:', err);
       }
-    } catch (err) {
-      console.error('Error fetching rooms:', err);
-    }
-  };
+    };
+    fetchRooms();
+  }, []);
 
-  const fetchMessages = async () => {
+  useEffect(() => {
     if (!selectedRoom) return;
-    try {
-      const response = await api.get(`/community-rooms/${selectedRoom}/messages`);
-      setMessages(response.data);
-    } catch (err) {
-      console.error('Error fetching messages:', err);
-    }
-  };
+
+    const fetchMessages = async () => {
+      try {
+        const response = await api.get(`/community-rooms/${selectedRoom}/messages`);
+        setMessages(response.data);
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView();
+        }
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+      }
+    };
+
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 3000);
+    return () => clearInterval(interval);
+  }, [selectedRoom]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -82,7 +67,6 @@ function Community({ user }) {
         text: newMessage
       });
 
-      // Add user message and AI message (if exists)
       if (response.data.aiMessage) {
         setMessages(prev => [...prev, response.data.userMessage, response.data.aiMessage]);
       } else {
@@ -99,73 +83,49 @@ function Community({ user }) {
   const currentRoom = rooms.find(r => r._id === selectedRoom);
 
   return (
-    <div className="community-container">
-      {/* Room Selector */}
+    <div className="community-main">
       <div className="room-list">
         {rooms.map(room => (
           <button
             key={room._id}
-            className={`room-item ${selectedRoom === room._id ? 'active' : ''}`}
+            className={selectedRoom === room._id ? 'room-btn active' : 'room-btn'}
             onClick={() => setSelectedRoom(room._id)}
-            title={room.description}
           >
             {room.name}
           </button>
         ))}
       </div>
 
-      {/* Chat Window */}
-      <div className="chat-window">
-        {currentRoom ? (
+      <div className="chat-box">
+        {currentRoom && (
           <>
-            {/* Header */}
             <div className="chat-header">
               <h2>{currentRoom.name}</h2>
               <p>{currentRoom.description}</p>
             </div>
 
-            {/* Messages Area */}
-            <div className="messages-area" ref={messagesContainerRef}>
-              {messages.length === 0 ? (
-                <div className="empty-state">
-                  <p>💬 No messages yet. Start the conversation!</p>
+            <div className="messages-box">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={msg.isAI ? 'msg ai-msg' : 'msg user-msg'}>
+                  <strong>{msg.userName}</strong>
+                  <p>{msg.text}</p>
+                  <small>{new Date(msg.createdAt).toLocaleTimeString()}</small>
                 </div>
-              ) : (
-                messages.map((msg, idx) => (
-                  <div key={`${msg._id || idx}`} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
-                    <div className="message-header">
-                      <span className="sender-name">{msg.userName}</span>
-                      <span className="message-time">
-                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                    <div className="message-text">{msg.text}</div>
-                  </div>
-                ))
-              )}
+              ))}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
-            <div className="input-area">
-              <form className="message-form" onSubmit={handleSendMessage}>
-                <input
-                  type="text"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type a message..."
-                  disabled={loading}
-                />
-                <button type="submit" disabled={loading || !newMessage.trim()}>
-                  {loading ? '⏳' : 'Send'}
-                </button>
-              </form>
-            </div>
+            <form className="msg-input" onSubmit={handleSendMessage}>
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..."
+                disabled={loading}
+              />
+              <button type="submit" disabled={loading || !newMessage.trim()}>Send</button>
+            </form>
           </>
-        ) : (
-          <div className="no-room">
-            <p>Select a room to start chatting</p>
-          </div>
         )}
       </div>
     </div>
