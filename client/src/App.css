@@ -169,10 +169,11 @@
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .container .chat-rooms-section {
-  margin: -20px;
+  margin: -20px -20px 0 -20px;
   width: calc(100% + 40px);
   max-width: none;
 }
@@ -733,11 +734,17 @@
     position: relative;
   }
 
+  .container {
+    padding: 0;
+    margin: 0;
+  }
+
   .container .chat-rooms-section {
-    margin: -15px -15px 0 -15px;
-    width: calc(100% + 30px);
+    margin: 0;
+    width: 100%;
     padding: 0 !important;
     min-height: calc(100vh - 180px);
+    max-width: 100%;
   }
 }
 
