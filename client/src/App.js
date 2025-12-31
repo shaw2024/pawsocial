@@ -315,36 +315,7 @@ function App() {
   };
 
   if (!user) {
-    return (
-      <div className="app">
-        <GettingStarted 
-          onEnter={() => setActivePage('profile')}
-          onCommunity={(roomName) => {
-            setActivePage('community');
-            setSelectedRoomId(roomName);
-          }}
-        />
-        <div style={{ position: 'fixed', bottom: 20, left: 20, right: 20, maxWidth: 'calc(100% - 40px)' }}>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button 
-              onClick={() => setActivePage('signin')}
-              style={{
-                padding: '12px 30px',
-                background: '#667eea',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px'
-              }}
-            >
-              🔑 Sign In
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <SignIn onSignIn={setUser} />;
   }
 
   if (activePage === 'signin') {

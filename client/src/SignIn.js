@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TermsModal from './TermsModal';
+import GettingStarted from './GettingStarted';
 import './SignIn.css';
 
 function SignIn({ onSignIn }) {
@@ -9,6 +10,7 @@ function SignIn({ onSignIn }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalType, setModalType] = useState(null);
+  const [showGettingStarted, setShowGettingStarted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -165,11 +167,36 @@ function SignIn({ onSignIn }) {
         </div>
 
         <div className="signin-contact-footer">
-          <p>Questions? <a href="mailto:support@pawsocial.app" className="contact-link">Contact Us</a></p>
+          <p>Questions? <a href="mailto:support@pawsocial.app" className="contact-link">Contact Us</a> • {' '}
+            <button 
+              type="button"
+              className="getting-started-link"
+              onClick={() => setShowGettingStarted(true)}
+            >
+              How to Get Started
+            </button>
+          </p>
         </div>
       </div>
 
       {modalType && <TermsModal type={modalType} onClose={() => setModalType(null)} />}
+
+      {showGettingStarted && (
+        <div className="getting-started-modal-overlay" onClick={() => setShowGettingStarted(false)}>
+          <div className="getting-started-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="close-getting-started"
+              onClick={() => setShowGettingStarted(false)}
+            >
+              ✕
+            </button>
+            <GettingStarted 
+              onEnter={() => setShowGettingStarted(false)}
+              onCommunity={() => setShowGettingStarted(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
