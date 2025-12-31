@@ -413,6 +413,12 @@ function App() {
 
       <div className="tabs">
         <button 
+          className={`tab ${activePage === 'getting-started' ? 'active' : ''}`}
+          onClick={() => setActivePage('getting-started')}
+        >
+          📖 Getting Started
+        </button>
+        <button 
           className={`tab ${activePage === 'add' ? 'active' : ''}`}
           onClick={() => setActivePage('add')}
         >
@@ -433,6 +439,116 @@ function App() {
       </div>
 
       <div className="container">
+        {activePage === 'getting-started' && (
+          <div className="panel getting-started-guide">
+            <h2>📖 How to Use PawSocial</h2>
+            
+            <div className="guide-section">
+              <h3>🐾 Getting Started</h3>
+              <p>Welcome to PawSocial! Here's how to make the most of our dog-loving community:</p>
+              
+              <div className="guide-steps">
+                <div className="step-item">
+                  <div className="step-header">
+                    <span className="step-icon">1️⃣</span>
+                    <h4>Create Your Profile & Add Your Dogs</h4>
+                  </div>
+                  <p>Go to the "Add Dog" tab and share photos and details about your dogs. Include breed, age, personality traits, energy level, and any special information that helps others get to know your pup!</p>
+                </div>
+
+                <div className="step-item">
+                  <div className="step-header">
+                    <span className="step-icon">2️⃣</span>
+                    <h4>Explore the Community</h4>
+                  </div>
+                  <p>Visit the "Community" tab to see all posted dogs. You can like dogs, save your favorites, and leave comments. Filter by breed to find dogs that match your interests.</p>
+                </div>
+
+                <div className="step-item">
+                  <div className="step-header">
+                    <span className="step-icon">3️⃣</span>
+                    <h4>Join Chat Rooms</h4>
+                  </div>
+                  <p>Use the "Chat Rooms" tab to join discussions about dog training, health, breeds, activities, meetups, and more. Connect with experienced dog owners and share your knowledge!</p>
+                </div>
+
+                <div className="step-item">
+                  <div className="step-header">
+                    <span className="step-icon">4️⃣</span>
+                    <h4>Organize Meetups & Find Breeding Partners</h4>
+                  </div>
+                  <p>Use the Meetup room to connect with local dog owners and plan activities. If you're interested in breeding, visit the Breeding Discussion room to find compatible partners.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="guide-section">
+              <h3>💬 Our Chat Rooms</h3>
+              <div className="rooms-overview">
+                <div className="room-overview-item">
+                  <strong>🎓 Dog Training & Behavior</strong>
+                  <p>Learn training techniques, discuss behavioral challenges, and share tips with other dog owners.</p>
+                </div>
+                <div className="room-overview-item">
+                  <strong>💪 Health & Wellness</strong>
+                  <p>Share health concerns, nutrition advice, exercise tips, and veterinary recommendations.</p>
+                </div>
+                <div className="room-overview-item">
+                  <strong>📖 Breed Discussion</strong>
+                  <p>Deep dive into specific breeds. Discuss characteristics, care requirements, and breed standards.</p>
+                </div>
+                <div className="room-overview-item">
+                  <strong>🎮 Playtime & Activities</strong>
+                  <p>Share fun games, tricks, sports, and creative activities to enrich your dog's life.</p>
+                </div>
+                <div className="room-overview-item">
+                  <strong>👶 Puppies & New Owners</strong>
+                  <p>Get guidance on puppy care, training, socialization, and preparation for first-time dog owners.</p>
+                </div>
+                <div className="room-overview-item">
+                  <strong>🐾 Meetup</strong>
+                  <p>Connect with local dog owners and organize dog parks visits, playdates, and community events.</p>
+                </div>
+                <div className="room-overview-item">
+                  <strong>❤️ Breeding Discussion</strong>
+                  <p>For responsible breeders and those interested in breeding. Find compatible partners and share best practices.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="guide-section">
+              <h3>✨ Community Features</h3>
+              <ul className="features-list">
+                <li><strong>Like & Save:</strong> Like dogs you love and save them to your favorites for later.</li>
+                <li><strong>Comments:</strong> Leave comments on dog posts to ask questions or share thoughts.</li>
+                <li><strong>Breed Filtering:</strong> Filter dogs by breed to find dogs of your favorite breeds.</li>
+                <li><strong>Real-time Chat:</strong> Join live discussions with other dog enthusiasts.</li>
+                <li><strong>Profile Customization:</strong> Share as much or as little as you're comfortable with.</li>
+              </ul>
+            </div>
+
+            <div className="guide-section">
+              <h3>🚀 Tips for Success</h3>
+              <ul className="tips-list">
+                <li>Use clear, quality photos of your dog to help others connect with you.</li>
+                <li>Provide accurate details about your dog's breed, age, and personality.</li>
+                <li>Be respectful and kind to all community members.</li>
+                <li>Join the chat rooms that interest you most - don't try to do everything at once!</li>
+                <li>Share your experiences and learn from others who share your dog-loving passion.</li>
+              </ul>
+            </div>
+
+            <div className="cta-section">
+              <p><strong>Ready to get started?</strong></p>
+              <button className="btn-primary" onClick={() => setActivePage('add')}>
+                📸 Add Your Dog
+              </button>
+              <button className="btn-secondary" onClick={() => setActivePage('community')}>
+                👥 Explore Community
+              </button>
+            </div>
+          </div>
+        )}
         {activePage === 'add' && (
           <div className="panel">
             <h2>Add Your Dog</h2>
