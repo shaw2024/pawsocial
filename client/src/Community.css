@@ -20,27 +20,6 @@
   margin: 0;
 }
 
-/* Custom scrollbar for rooms - webkit browsers */
-.rooms-scroll::-webkit-scrollbar {
-  height: 8px;
-}
-
-.rooms-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.rooms-scroll::-webkit-scrollbar-thumb {
-  background: #999;
-  border-radius: 4px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-.rooms-scroll::-webkit-scrollbar-thumb:hover {
-  background: #666;
-  background-clip: padding-box;
-}
-
 .room-btn {
   padding: 12px 16px;
   background: white;
@@ -332,27 +311,6 @@
   -webkit-overflow-scrolling: touch;
   /* GPU acceleration for smooth scrolling */
   will-change: scroll-position;
-}
-
-/* Custom scrollbar styling */
-.messages-container::-webkit-scrollbar {
-  width: 10px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 5px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
-}
-
-.messages-container::-webkit-scrollbar-thumb:hover {
-  background: #764ba2;
-  background-clip: padding-box;
 }
 
 /* Loading Spinner */
