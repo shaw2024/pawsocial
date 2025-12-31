@@ -213,10 +213,11 @@
 .msg {
   padding: 10px 12px;
   border-radius: 8px;
-  max-width: 80%;
+  max-width: 85%;
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
+  min-width: 0;
 }
 
 .msg strong {
@@ -408,12 +409,13 @@
   }
 
   .msg {
-    max-width: 90%;
+    max-width: calc(100vw - 50px);
     padding: 8px 10px;
     word-wrap: break-word;
     overflow-wrap: break-word;
     word-break: break-word;
     hyphens: auto;
+    min-width: 0;
   }
 
   .msg strong {
@@ -569,8 +571,9 @@
 
   .msg {
     padding: 4px 6px;
-    max-width: 92%;
+    max-width: calc(100vw - 40px);
     font-size: 11px;
+    min-width: 0;
   }
 
   .msg strong {
