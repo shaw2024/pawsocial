@@ -66,7 +66,7 @@ function App() {
   useEffect(() => {
     if (user) {
       console.log('👤 User logged in:', user.email);
-      setActivePage('profile');
+      setActivePage('getting-started');
       setDogsPage(0);
     }
   }, [user]);
