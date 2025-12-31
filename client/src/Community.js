@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import './Community.css';
 
-// Use production API for GitHub Pages, localhost for development
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.port === '3000'
   ? 'http://localhost:4000'
   : 'https://pawsocial-api.onrender.com';
@@ -12,70 +11,41 @@ const api = axios.create({
   timeout: 60000
 });
 
-// Memoized Message Component to prevent unnecessary re-renders
-const Message = React.memo(({ msg, idx }) => (
-  <div key={idx} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
-    <div className="message-meta">
-      <span className="message-sender">{msg.userName}</span>
-      <span className="message-time">
-        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-      </span>
-    </div>
-    <div className="message-content">{msg.text}</div>
-  </div>
-));
-
-Message.displayName = 'Message';
-
 function Community({ user }) {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [initialLoadingComplete, setInitialLoadingComplete] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
-  const hasUserSentMessage = useRef(false);
-  const pollIntervalRef = useRef(null);
-  const lastMessageCountRef = useRef(0);
 
-  // Display only the last 30 messages to improve performance
-  const displayedMessages = useMemo(() => {
-    const limit = 30;
-    return messages.length > limit ? messages.slice(-limit) : messages;
-  }, [messages]);
+  // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, []);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  // Fetch rooms on mount
   useEffect(() => {
     fetchRooms();
   }, []);
 
+  // Fetch messages when room changes
   useEffect(() => {
     if (selectedRoom) {
-      setInitialLoadingComplete(false);
       fetchMessages();
-      // Increased polling interval from 3s to 5s to reduce server load and re-renders
-      pollIntervalRef.current = setInterval(fetchMessages, 5000);
-      return () => {
-        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-      };
+      const interval = setInterval(fetchMessages, 3000);
+      return () => clearInterval(interval);
     }
   }, [selectedRoom]);
 
-  useEffect(() => {
-    // Only auto-scroll if user just sent a message
-    if (hasUserSentMessage.current && messagesContainerRef.current) {
-      requestAnimationFrame(() => {
-        if (messagesContainerRef.current) {
-          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-        }
-      });
-      hasUserSentMessage.current = false;
-    }
-  }, [displayedMessages]);
-
-  const fetchRooms = useCallback(async () => {
+  const fetchRooms = async () => {
     try {
       const response = await api.get('/community-rooms');
       setRooms(response.data);
@@ -85,32 +55,23 @@ function Community({ user }) {
     } catch (err) {
       console.error('Error fetching rooms:', err);
     }
-  }, [selectedRoom]);
+  };
 
-  const fetchMessages = useCallback(async () => {
+  const fetchMessages = async () => {
     if (!selectedRoom) return;
     try {
       const response = await api.get(`/community-rooms/${selectedRoom}/messages`);
-      const newCount = response.data.length;
-      // Only update state if message count changed to reduce unnecessary re-renders
-      if (newCount !== lastMessageCountRef.current) {
-        setMessages(response.data);
-        lastMessageCountRef.current = newCount;
-      }
-      if (!initialLoadingComplete) {
-        setInitialLoadingComplete(true);
-      }
+      setMessages(response.data);
     } catch (err) {
       console.error('Error fetching messages:', err);
     }
-  }, [selectedRoom, initialLoadingComplete]);
+  };
 
-  const handleSendMessage = useCallback(async (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedRoom) return;
 
     setLoading(true);
-    hasUserSentMessage.current = true;
     try {
       const response = await api.post(`/community-rooms/${selectedRoom}/message`, {
         userId: user.id,
@@ -119,7 +80,7 @@ function Community({ user }) {
         text: newMessage
       });
 
-      // Only add aiMessage if it exists (not null for meetup rooms)
+      // Add user message and AI message (if exists)
       if (response.data.aiMessage) {
         setMessages(prev => [...prev, response.data.userMessage, response.data.aiMessage]);
       } else {
@@ -131,86 +92,60 @@ function Community({ user }) {
     } finally {
       setLoading(false);
     }
-  }, [newMessage, selectedRoom, user]);
+  };
 
   const currentRoom = rooms.find(r => r._id === selectedRoom);
 
   return (
-    <div className="community-wrapper">
-      <div className="community-container">
-        {/* Room Selection - Horizontal Scrollable on Mobile - Hidden on Mobile */}
-        <div className="room-selector">
-          <div className="rooms-scroll">
-            {rooms.map(room => (
-              <button
-                key={room._id}
-                className={`room-btn ${selectedRoom === room._id ? 'active' : ''}`}
-                onClick={() => setSelectedRoom(room._id)}
-                title={room.description}
-              >
-                <div className="room-name">{room.name}</div>
-                <div className="room-topic">{room.topic}</div>
-              </button>
-            ))}
-          </div>
-        </div>
+    <div className="community-container">
+      {/* Room Selector */}
+      <div className="room-list">
+        {rooms.map(room => (
+          <button
+            key={room._id}
+            className={`room-item ${selectedRoom === room._id ? 'active' : ''}`}
+            onClick={() => setSelectedRoom(room._id)}
+            title={room.description}
+          >
+            {room.name}
+          </button>
+        ))}
+      </div>
 
-        {/* Chat Area */}
-        <div className="chat-area">
-          {currentRoom && (
-            <>
-              {/* Header */}
-              <div className="chat-header">
-                <div className="header-top">
-                  <h2>{currentRoom.name}</h2>
-                  <div className="topic-dropdown">
-                    <button 
-                      className="topic-dropdown-btn"
-                      onClick={() => setShowDropdown(!showDropdown)}
-                    >
-                      {currentRoom.topic} ▼
-                    </button>
-                    {showDropdown && (
-                      <div className="topic-dropdown-menu">
-                        {rooms.map(room => (
-                          <button
-                            key={room._id}
-                            className={`topic-option ${selectedRoom === room._id ? 'active' : ''}`}
-                            onClick={() => {
-                              setSelectedRoom(room._id);
-                              setShowDropdown(false);
-                            }}
-                          >
-                            {room.name} - {room.topic}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+      {/* Chat Window */}
+      <div className="chat-window">
+        {currentRoom ? (
+          <>
+            {/* Header */}
+            <div className="chat-header">
+              <h2>{currentRoom.name}</h2>
+              <p>{currentRoom.description}</p>
+            </div>
+
+            {/* Messages Area */}
+            <div className="messages-area" ref={messagesContainerRef}>
+              {messages.length === 0 ? (
+                <div className="empty-state">
+                  <p>💬 No messages yet. Start the conversation!</p>
                 </div>
-                <p>{currentRoom.description}</p>
-              </div>
-
-              {/* Messages */}
-              <div className="messages-container" ref={messagesContainerRef}>
-                {!initialLoadingComplete ? (
-                  <div className="loading-spinner">
-                    <div className="spinner"></div>
-                    <p>Loading messages...</p>
+              ) : (
+                messages.map((msg, idx) => (
+                  <div key={`${msg._id || idx}`} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
+                    <div className="message-header">
+                      <span className="sender-name">{msg.userName}</span>
+                      <span className="message-time">
+                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <div className="message-text">{msg.text}</div>
                   </div>
-                ) : displayedMessages.length === 0 ? (
-                  <div className="no-messages">
-                    <p>💬 No messages yet. Be the first to start a conversation!</p>
-                  </div>
-                ) : (
-                  displayedMessages.map((msg, idx) => (
-                    <Message key={`${msg._id || idx}`} msg={msg} idx={idx} />
-                  ))
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+                ))
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-              {/* Input Form */}
+            {/* Input Area */}
+            <div className="input-area">
               <form className="message-form" onSubmit={handleSendMessage}>
                 <input
                   type="text"
@@ -218,18 +153,18 @@ function Community({ user }) {
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
                   disabled={loading}
-                  autoComplete="off"
                 />
-                <button
-                  type="submit"
-                  disabled={loading || !newMessage.trim()}
-                >
-                  {loading ? '⏳' : '📤'}
+                <button type="submit" disabled={loading || !newMessage.trim()}>
+                  {loading ? '⏳' : 'Send'}
                 </button>
               </form>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        ) : (
+          <div className="no-room">
+            <p>Select a room to start chatting</p>
+          </div>
+        )}
       </div>
     </div>
   );
