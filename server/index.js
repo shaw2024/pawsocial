@@ -133,7 +133,23 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model('Message', messageSchema);
 
-// Authentication Middleware
+// Meetup Schema
+const meetupSchema = new mongoose.Schema({
+  title: { type: String, required: true, trim: true, maxlength: 150 },
+  description: { type: String, trim: true, maxlength: 1000 },
+  date: { type: Date, required: true },
+  location: { type: String, required: true, trim: true, maxlength: 200 },
+  city: { type: String, trim: true, maxlength: 100 },
+  userId: String,
+  userName: { type: String, trim: true, maxlength: 100 },
+  userEmail: { type: String, trim: true, maxlength: 254 },
+  attendees: { type: Number, default: 1 },
+  maxAttendees: { type: Number, default: 20 },
+  interestedUsers: [String],
+  createdAt: { type: Date, default: Date.now, index: true }
+});
+
+const Meetup = mongoose.model('Meetup', meetupSchema);
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -300,6 +316,70 @@ app.post('/community-rooms/:roomId/message', async (req, res) => {
     res.json({ userMessage, aiMessage: null });
   } catch (err) {
     console.error('Error posting message:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Meetup Routes
+app.get('/meetups', async (req, res) => {
+  try {
+    const meetups = await Meetup.find()
+      .sort({ date: 1 })
+      .limit(50);
+    res.json(meetups);
+  } catch (err) {
+    console.error('Error fetching meetups:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/meetups/create', async (req, res) => {
+  try {
+    const { title, description, date, location, city, userId, userName, userEmail } = req.body;
+    
+    if (!title || !date || !location) {
+      return res.status(400).json({ error: 'Title, date, and location are required' });
+    }
+    
+    const meetup = new Meetup({
+      title,
+      description,
+      date: new Date(date),
+      location,
+      city,
+      userId,
+      userName: userName || 'Anonymous',
+      userEmail,
+      attendees: 1,
+      interestedUsers: [userId]
+    });
+    
+    await meetup.save();
+    res.json(meetup);
+  } catch (err) {
+    console.error('Error creating meetup:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/meetups/:meetupId/join', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const meetup = await Meetup.findById(req.params.meetupId);
+    
+    if (!meetup) {
+      return res.status(404).json({ error: 'Meetup not found' });
+    }
+    
+    if (!meetup.interestedUsers.includes(userId)) {
+      meetup.interestedUsers.push(userId);
+      meetup.attendees = meetup.interestedUsers.length;
+      await meetup.save();
+    }
+    
+    res.json(meetup);
+  } catch (err) {
+    console.error('Error joining meetup:', err);
     res.status(500).json({ error: err.message });
   }
 });

@@ -15,7 +15,16 @@ function Community({ user }) {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [meetups, setMeetups] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [showMeetupForm, setShowMeetupForm] = useState(false);
+  const [meetupForm, setMeetupForm] = useState({
+    title: '',
+    description: '',
+    date: '',
+    location: '',
+    city: ''
+  });
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -49,7 +58,17 @@ function Community({ user }) {
       }
     };
 
+    const fetchMeetups = async () => {
+      try {
+        const response = await api.get('/meetups');
+        setMeetups(response.data);
+      } catch (err) {
+        console.error('Error fetching meetups:', err);
+      }
+    };
+
     fetchMessages();
+    fetchMeetups();
     const interval = setInterval(fetchMessages, 3000);
     return () => clearInterval(interval);
   }, [selectedRoom]);
@@ -80,6 +99,48 @@ function Community({ user }) {
     }
   };
 
+  const handleCreateMeetup = async (e) => {
+    e.preventDefault();
+    if (!meetupForm.title || !meetupForm.date || !meetupForm.location) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.post('/meetups/create', {
+        ...meetupForm,
+        userId: user.id,
+        userName: user.email.split('@')[0],
+        userEmail: user.email
+      });
+
+      setMeetupForm({ title: '', description: '', date: '', location: '', city: '' });
+      setShowMeetupForm(false);
+
+      const response = await api.get('/meetups');
+      setMeetups(response.data);
+    } catch (err) {
+      console.error('Error creating meetup:', err);
+      alert('Failed to create meetup');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleJoinMeetup = async (meetupId) => {
+    try {
+      await api.post(`/meetups/${meetupId}/join`, {
+        userId: user.id
+      });
+
+      const response = await api.get('/meetups');
+      setMeetups(response.data);
+    } catch (err) {
+      console.error('Error joining meetup:', err);
+    }
+  };
+
   const currentRoom = rooms.find(r => r._id === selectedRoom);
 
   return (
@@ -100,9 +161,80 @@ function Community({ user }) {
         {currentRoom && (
           <>
             <div className="chat-header">
-              <h2>{currentRoom.name}</h2>
+              <div className="header-top">
+                <h2>{currentRoom.name}</h2>
+                {currentRoom.topic === 'Meetup' && (
+                  <button 
+                    className="create-meetup-btn"
+                    onClick={() => setShowMeetupForm(!showMeetupForm)}
+                  >
+                    {showMeetupForm ? '✕ Close' : '+ New Meetup'}
+                  </button>
+                )}
+              </div>
               <p>{currentRoom.description}</p>
             </div>
+
+            {showMeetupForm && currentRoom.topic === 'Meetup' && (
+              <form className="meetup-form" onSubmit={handleCreateMeetup}>
+                <input
+                  type="text"
+                  placeholder="Meetup Title"
+                  value={meetupForm.title}
+                  onChange={(e) => setMeetupForm({...meetupForm, title: e.target.value})}
+                  required
+                />
+                <input
+                  type="datetime-local"
+                  value={meetupForm.date}
+                  onChange={(e) => setMeetupForm({...meetupForm, date: e.target.value})}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Location"
+                  value={meetupForm.location}
+                  onChange={(e) => setMeetupForm({...meetupForm, location: e.target.value})}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="City"
+                  value={meetupForm.city}
+                  onChange={(e) => setMeetupForm({...meetupForm, city: e.target.value})}
+                />
+                <textarea
+                  placeholder="Description"
+                  value={meetupForm.description}
+                  onChange={(e) => setMeetupForm({...meetupForm, description: e.target.value})}
+                  rows="3"
+                />
+                <button type="submit" disabled={loading}>Create Meetup</button>
+              </form>
+            )}
+
+            {currentRoom.topic === 'Meetup' && meetups.length > 0 && (
+              <div className="meetups-list">
+                <h3>📍 Upcoming Meetups</h3>
+                {meetups.map((meetup) => (
+                  <div key={meetup._id} className="meetup-card">
+                    <h4>{meetup.title}</h4>
+                    <p><strong>Date:</strong> {new Date(meetup.date).toLocaleString()}</p>
+                    <p><strong>Location:</strong> {meetup.location}{meetup.city && `, ${meetup.city}`}</p>
+                    {meetup.description && <p><strong>Details:</strong> {meetup.description}</p>}
+                    <p><strong>Attendees:</strong> {meetup.attendees}/{meetup.maxAttendees}</p>
+                    <p><strong>Organizer:</strong> {meetup.userName}</p>
+                    <button 
+                      className="join-btn"
+                      onClick={() => handleJoinMeetup(meetup._id)}
+                      disabled={meetup.attendees >= meetup.maxAttendees}
+                    >
+                      {meetup.interestedUsers.includes(user.id) ? '✓ Joined' : 'Join Meetup'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="messages-box">
               {messages.map((msg, idx) => (

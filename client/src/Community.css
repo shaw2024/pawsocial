@@ -54,16 +54,147 @@
   flex-shrink: 0;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
 .chat-header h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  flex: 1;
+}
+
+.create-meetup-btn {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.create-meetup-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .chat-header p {
   margin: 4px 0 0 0;
   font-size: 13px;
   opacity: 0.9;
+}
+
+.meetup-form {
+  padding: 16px 20px;
+  background: #f0f0ff;
+  border-bottom: 2px solid #667eea;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.meetup-form input,
+.meetup-form textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.meetup-form input:focus,
+.meetup-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.meetup-form button {
+  padding: 10px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.meetup-form button:hover:not(:disabled) {
+  background: #764ba2;
+}
+
+.meetup-form button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.meetups-list {
+  padding: 16px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+  flex-shrink: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.meetups-list h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.meetup-card {
+  padding: 12px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.meetup-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #667eea;
+}
+
+.meetup-card p {
+  margin: 4px 0;
+  line-height: 1.3;
+}
+
+.join-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.join-btn:hover:not(:disabled) {
+  background: #764ba2;
+}
+
+.join-btn:disabled {
+  background: #4caf50;
+  cursor: default;
 }
 
 .messages-box {
