@@ -3,6 +3,7 @@ import axios from 'axios';
 import SignIn from './SignIn';
 import Profile from './Profile';
 import Community from './Community';
+import GettingStarted from './GettingStarted';
 import './App.css';
 
 // Use production API for GitHub Pages, localhost for development
@@ -34,7 +35,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [commentText, setCommentText] = useState({});
-  const [activePage, setActivePage] = useState('profile');
+  const [activePage, setActivePage] = useState('getting-started');
   const [selectedBreed, setSelectedBreed] = useState('all');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [savedDogs, setSavedDogs] = useState([]);
@@ -341,6 +342,18 @@ function App() {
       </button>
     </div>
   );
+
+  if (activePage === 'getting-started') {
+    return (
+      <div className="app">
+        <GettingStarted 
+          onEnter={() => setActivePage('profile')}
+          onCommunity={() => setActivePage('community')}
+        />
+        {renderBottomNav()}
+      </div>
+    );
+  }
 
   if (activePage === 'profile') {
     return (
