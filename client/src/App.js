@@ -252,7 +252,7 @@ function App() {
     setImage(null);
     setImagePreview(null);
     setMessage('');
-    setActivePage('profile');
+    setActivePage('getting-started');
   };
 
   const handleNavigate = (page, breed = null) => {
