@@ -20,7 +20,7 @@
   margin: 0;
 }
 
-/* Custom scrollbar for rooms */
+/* Custom scrollbar for rooms - webkit browsers */
 .rooms-scroll::-webkit-scrollbar {
   height: 6px;
 }
@@ -32,17 +32,10 @@
 .rooms-scroll::-webkit-scrollbar-thumb {
   background: #d0d0d0;
   border-radius: 3px;
-  transition: background 0.3s ease;
 }
 
 .rooms-scroll::-webkit-scrollbar-thumb:hover {
   background: #b0b0b0;
-}
-
-/* Firefox scrollbar for rooms */
-.rooms-scroll {
-  scrollbar-color: #d0d0d0 #f5f5f5;
-  scrollbar-width: thin;
 }
 
 .room-btn {
@@ -356,12 +349,6 @@
 
 .messages-container::-webkit-scrollbar-thumb:hover {
   background: #764ba2;
-}
-
-/* Firefox scrollbar */
-.messages-container {
-  scrollbar-color: #667eea #f0f0f0;
-  scrollbar-width: thin;
 }
 
 /* Loading Spinner */
