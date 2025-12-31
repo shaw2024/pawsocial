@@ -6,7 +6,7 @@
 }
 
 .welcome-content {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -26,9 +26,16 @@
 .tagline {
   font-size: 18px;
   opacity: 0.95;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  opacity: 0.9;
   margin: 0;
 }
 
+/* Feature Cards */
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -43,6 +50,8 @@
   text-align: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
 .feature-card:hover {
@@ -65,9 +74,29 @@
   color: #666;
   font-size: 14px;
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 15px 0;
+  flex-grow: 1;
 }
 
+.feature-link-btn {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+  align-self: center;
+}
+
+.feature-link-btn:hover {
+  background: #764ba2;
+  transform: scale(1.05);
+}
+
+/* How It Works Section */
 .how-it-works {
   background: white;
   border-radius: 12px;
@@ -79,56 +108,58 @@
 .how-it-works h2 {
   color: #667eea;
   font-size: 24px;
-  margin: 0 0 20px 0;
+  margin: 0 0 30px 0;
+  text-align: center;
 }
 
-.steps-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
-.steps-list li {
-  padding: 12px 0 12px 30px;
-  position: relative;
-  color: #333;
-  line-height: 1.6;
-  border-bottom: 1px solid #eee;
+.step {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
 }
 
-.steps-list li:last-child {
-  border-bottom: none;
-}
-
-.steps-list li:before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  background: #667eea;
-  border-radius: 50%;
+.step-number {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  background: #667eea;
   color: white;
+  border-radius: 50%;
   font-weight: bold;
-  counter-increment: step-counter;
+  font-size: 16px;
 }
 
-.steps-list {
-  counter-reset: step-counter;
+.step-content {
+  flex: 1;
 }
 
-.steps-list li:nth-child(1):before { content: '1'; }
-.steps-list li:nth-child(2):before { content: '2'; }
-.steps-list li:nth-child(3):before { content: '3'; }
-.steps-list li:nth-child(4):before { content: '4'; }
-.steps-list li:nth-child(5):before { content: '5'; }
+.step-content h4 {
+  color: #667eea;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
 
-.chat-rooms-preview {
+.step-content p {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Chat Rooms Section */
+.chat-rooms-section {
   background: white;
   border-radius: 12px;
   padding: 30px;
@@ -136,34 +167,87 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.chat-rooms-preview h2 {
+.chat-rooms-section h2 {
   color: #667eea;
   font-size: 24px;
-  margin: 0 0 20px 0;
+  margin: 0 0 10px 0;
+  text-align: center;
 }
 
-.rooms-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 15px;
-}
-
-.rooms-list li {
-  padding: 15px;
-  background: #f9f9f9;
-  border-left: 4px solid #667eea;
-  border-radius: 6px;
-  color: #333;
+.rooms-intro {
+  text-align: center;
+  color: #999;
   font-size: 14px;
+  margin: 0 0 25px 0;
 }
 
-.rooms-list strong {
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.room-card {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-card:hover {
+  background: #f0f0f0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.room-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.room-icon {
+  font-size: 28px;
+  min-width: 30px;
+}
+
+.room-card h3 {
   color: #667eea;
+  margin: 0;
+  font-size: 16px;
 }
 
+.room-description {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 15px 0;
+  flex-grow: 1;
+}
+
+.room-link-btn {
+  padding: 10px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+  align-self: flex-start;
+}
+
+.room-link-btn:hover {
+  background: #764ba2;
+  transform: translateX(3px);
+}
+
+/* Action Buttons */
 .action-buttons {
   display: flex;
   gap: 20px;
@@ -192,6 +276,7 @@
 .enter-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: #f5f5f5;
 }
 
 .community-btn {
@@ -206,6 +291,29 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Info Banner */
+.info-banner {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 40px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.info-banner h3 {
+  color: #667eea;
+  font-size: 18px;
+  margin: 0 0 12px 0;
+}
+
+.info-banner p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .getting-started-container {
     padding: 20px 15px;
@@ -240,25 +348,68 @@
     font-size: 13px;
   }
 
+  .feature-link-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
   .how-it-works,
-  .chat-rooms-preview {
+  .chat-rooms-section {
     padding: 20px;
     margin-bottom: 20px;
   }
 
   .how-it-works h2,
-  .chat-rooms-preview h2 {
+  .chat-rooms-section h2 {
     font-size: 18px;
+    margin-bottom: 20px;
   }
 
-  .rooms-list {
+  .steps-container {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 15px;
   }
 
-  .rooms-list li {
-    padding: 12px;
+  .step {
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .step-number {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .step-content h4 {
+    font-size: 15px;
+  }
+
+  .step-content p {
     font-size: 13px;
+  }
+
+  .rooms-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .room-card {
+    padding: 15px;
+  }
+
+  .room-icon {
+    font-size: 24px;
+  }
+
+  .room-card h3 {
+    font-size: 15px;
+  }
+
+  .room-description {
+    font-size: 12px;
+    margin-bottom: 12px;
   }
 
   .action-buttons {
@@ -273,4 +424,19 @@
     font-size: 14px;
     width: 100%;
   }
+
+  .info-banner {
+    padding: 18px;
+    margin-top: 30px;
+  }
+
+  .info-banner h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .info-banner p {
+    font-size: 13px;
+  }
 }
+
