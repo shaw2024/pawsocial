@@ -34,6 +34,7 @@ function Community({ user }) {
   // Fetch rooms on mount
   useEffect(() => {
     fetchRooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch messages when room changes
@@ -43,6 +44,7 @@ function Community({ user }) {
       const interval = setInterval(fetchMessages, 3000);
       return () => clearInterval(interval);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRoom]);
 
   const fetchRooms = async () => {
