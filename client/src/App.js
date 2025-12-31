@@ -321,6 +321,12 @@ function App() {
   const renderBottomNav = () => (
     <div className="bottom-nav">
       <button 
+        onClick={() => setActivePage('getting-started')} 
+        className={activePage === 'getting-started' ? 'active' : ''}
+      >
+        🏠 Home
+      </button>
+      <button 
         onClick={() => setActivePage('profile')} 
         className={activePage === 'profile' ? 'active' : ''}
       >
