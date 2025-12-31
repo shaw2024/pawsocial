@@ -7,12 +7,15 @@ function HelpChatBox() {
     { type: 'bot', text: 'Hello! 👋 How can we help you today?' }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
   const quickReplies = [
     'How do I add a dog?',
     'How do I join a chatroom?',
     'How do I save dogs?',
-    'How do I create a profile?'
+    'How do I create a profile?',
+    'Contact Support'
   ];
 
   const helpResponses = {
@@ -20,6 +23,7 @@ function HelpChatBox() {
     'join a chatroom': 'Visit the "Chat Rooms" tab to join different chatrooms. Click on any room name to start chatting with other dog lovers!',
     'save dogs': 'On the Community page, you can like and save your favorite dogs by clicking the heart and bookmark icons on each dog card.',
     'create a profile': 'Go to the Profile tab to set up your account, add your profile photo, and share information about yourself as a dog owner.',
+    'contact support': 'You can reach our support team via email. Please provide your email and message below!',
     'default': 'Thanks for reaching out! For more help, please visit our Getting Started guide or check out the Community chatrooms. 🐕'
   };
 
@@ -38,6 +42,9 @@ function HelpChatBox() {
       for (const key in helpResponses) {
         if (lowerText.includes(key)) {
           response = helpResponses[key];
+          if (key === 'contact support') {
+            setShowEmailForm(true);
+          }
           break;
         }
       }
@@ -47,7 +54,37 @@ function HelpChatBox() {
   };
 
   const handleQuickReply = (reply) => {
-    handleSendMessage(reply);
+    if (reply === 'Contact Support') {
+      handleSendMessage(reply);
+    } else {
+      handleSendMessage(reply);
+    }
+  };
+
+  const handleSendEmail = () => {
+    if (userEmail.trim() === '' || inputValue.trim() === '') {
+      alert('Please fill in both email and message');
+      return;
+    }
+
+    // Create mailto link
+    const subject = 'PawSocial Support Request';
+    const body = `Email: ${userEmail}\n\nMessage: ${inputValue}`;
+    const mailtoLink = `mailto:support@pawsocial.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Open email client
+    window.location.href = mailtoLink;
+
+    // Add confirmation message
+    setMessages(prev => [...prev, 
+      { type: 'user', text: `Email: ${userEmail}` },
+      { type: 'user', text: inputValue },
+      { type: 'bot', text: 'Thank you! Your email has been opened in your email client. Please send it to contact our support team. We\'ll get back to you soon! 📧' }
+    ]);
+
+    setInputValue('');
+    setUserEmail('');
+    setShowEmailForm(false);
   };
 
   return (
@@ -67,7 +104,7 @@ function HelpChatBox() {
             ))}
           </div>
 
-          {messages.length === 1 && (
+          {messages.length === 1 && !showEmailForm && (
             <div className="help-quick-replies">
               {quickReplies.map((reply, idx) => (
                 <button
@@ -81,21 +118,48 @@ function HelpChatBox() {
             </div>
           )}
 
-          <div className="help-input-box">
-            <input
-              type="text"
-              placeholder="Ask something..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(inputValue)}
-            />
-            <button 
-              className="help-send-btn" 
-              onClick={() => handleSendMessage(inputValue)}
-            >
-              Send
-            </button>
-          </div>
+          {showEmailForm && (
+            <div className="help-email-form">
+              <input
+                type="email"
+                placeholder="Your email address"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
+                className="help-email-input"
+              />
+              <textarea
+                placeholder="Your message..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="help-message-textarea"
+                rows="3"
+              />
+              <button 
+                className="help-email-send-btn" 
+                onClick={handleSendEmail}
+              >
+                Send Email
+              </button>
+            </div>
+          )}
+
+          {!showEmailForm && (
+            <div className="help-input-box">
+              <input
+                type="text"
+                placeholder="Ask something..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(inputValue)}
+              />
+              <button 
+                className="help-send-btn" 
+                onClick={() => handleSendMessage(inputValue)}
+              >
+                Send
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <button 

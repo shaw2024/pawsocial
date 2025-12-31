@@ -203,6 +203,60 @@
   background: #764ba2;
 }
 
+.help-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+  background: white;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+.help-email-input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.help-email-input:focus {
+  border-color: #667eea;
+}
+
+.help-message-textarea {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s;
+}
+
+.help-message-textarea:focus {
+  border-color: #667eea;
+}
+
+.help-email-send-btn {
+  padding: 10px 14px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.help-email-send-btn:hover {
+  background: #764ba2;
+}
+
 /* Mobile Responsive */
 @media (max-width: 600px) {
   .help-chatbox-container {
