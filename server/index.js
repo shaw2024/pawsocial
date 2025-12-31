@@ -260,7 +260,8 @@ app.get('/community-rooms', async (req, res) => {
         { name: 'Breed Discussion', topic: 'Breed Discussion', description: 'Breed-specific information, characteristics, and owner experiences' },
         { name: 'Playtime & Activities', topic: 'Playtime & Activities', description: 'Dog sports, games, activities, and entertainment ideas' },
         { name: 'Puppies & New Owners', topic: 'Puppies & New Owners', description: 'First-time owner advice, puppy care, and parenting tips' },
-        { name: 'Meetup', topic: 'Meetup', description: 'Organize local dog meetups and connect with other dog owners in your area' }
+        { name: 'Meetup', topic: 'Meetup', description: 'Organize local dog meetups and connect with other dog owners in your area' },
+        { name: 'Breeding Discussion', topic: 'Breeding Discussion', description: 'Connect with responsible breeders, find breeding partners, and discuss breeding best practices' }
       ];
       
       rooms = await CommunityRoom.insertMany(defaultRooms);
