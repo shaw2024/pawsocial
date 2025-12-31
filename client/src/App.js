@@ -4,6 +4,7 @@ import SignIn from './SignIn';
 import Profile from './Profile';
 import Community from './Community';
 import GettingStarted from './GettingStarted';
+import HelpChatBox from './HelpChatBox';
 import './App.css';
 
 // Use production API for GitHub Pages, localhost for development
@@ -829,6 +830,8 @@ function App() {
           </div>
         </div>
       )}
+
+      <HelpChatBox />
 
       {renderBottomNav()}
     </div>
