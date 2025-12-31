@@ -393,12 +393,12 @@ app.post('/community-rooms/:roomId/message', [
     
     await userMessage.save();
     
-    // Get room info to check if it's a meetup room
+    // Get room info to check if it's a meetup or breed discussion room
     const room = await CommunityRoom.findById(roomId);
     const roomTopic = room?.topic || 'Dog Training & Behavior';
     
-    // Only generate AI response for non-meetup rooms
-    if (roomTopic !== 'Meetup') {
+    // Only generate AI response for non-meetup and non-breed discussion rooms
+    if (roomTopic !== 'Meetup' && roomTopic !== 'Breed Discussion') {
       // Generate AI response for discussion rooms
       const aiResponse = await getAIResponse(text.trim(), roomTopic);
       const aiMessage = new Message({
@@ -413,7 +413,7 @@ app.post('/community-rooms/:roomId/message', [
       await aiMessage.save();
       res.json({ userMessage, aiMessage });
     } else {
-      // For meetup room, only return user message (customer-to-customer interaction)
+      // For meetup and breed discussion rooms, only return user message (customer-to-customer interaction)
       res.json({ userMessage, aiMessage: null });
     }
   } catch (err) {
