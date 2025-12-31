@@ -91,11 +91,7 @@ function Community({ user }) {
         text: newMessage
       });
 
-      if (response.data.aiMessage) {
-        setMessages(prev => [...prev, response.data.userMessage, response.data.aiMessage]);
-      } else {
-        setMessages(prev => [...prev, response.data.userMessage]);
-      }
+      setMessages(prev => [...prev, response.data.userMessage]);
       setNewMessage('');
     } catch (err) {
       console.error('Error sending message:', err);

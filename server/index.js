@@ -313,7 +313,7 @@ app.post('/community-rooms/:roomId/message', async (req, res) => {
     await userMessage.save();
     
     // Return only user message - no AI responses, only customer-to-customer interaction
-    res.json({ userMessage, aiMessage: null });
+    res.json({ userMessage });
   } catch (err) {
     console.error('Error posting message:', err);
     res.status(500).json({ error: err.message });
