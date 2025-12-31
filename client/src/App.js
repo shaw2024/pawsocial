@@ -45,7 +45,7 @@ function App() {
   const [expandedImage, setExpandedImage] = useState(null);
   const [imageLoadErrors, setImageLoadErrors] = useState({});
   const [imageRetries, setImageRetries] = useState({});
-  const [selectedRoomId, setSelectedRoomId] = useState(null);
+  const [selectedRoomName, setSelectedRoomName] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('pawsocial_user');
@@ -360,8 +360,8 @@ function App() {
         <GettingStarted 
           onEnter={() => setActivePage('profile')}
           onCommunity={(roomName) => {
-            setActivePage('community');
-            setSelectedRoomId(roomName);
+            setActivePage('chat-rooms');
+            setSelectedRoomName(roomName);
           }}
         />
         {renderBottomNav()}
@@ -816,7 +816,7 @@ function App() {
 
         {activePage === 'chat-rooms' && (
           <div className="chat-rooms-section">
-            <Community user={user} selectedRoomName={selectedRoomId} />
+            <Community user={user} selectedRoomName={selectedRoomName} />
           </div>
         )}
       </div>
