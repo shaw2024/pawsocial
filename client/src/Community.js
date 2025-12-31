@@ -50,9 +50,6 @@ function Community({ user }) {
       try {
         const response = await api.get(`/community-rooms/${selectedRoom}/messages`);
         setMessages(response.data);
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView();
-        }
       } catch (err) {
         console.error('Error fetching messages:', err);
       }
@@ -72,6 +69,13 @@ function Community({ user }) {
     const interval = setInterval(fetchMessages, 3000);
     return () => clearInterval(interval);
   }, [selectedRoom]);
+
+  // Scroll to bottom only when new message is sent
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [messages.length]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
