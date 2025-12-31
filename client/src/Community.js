@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import './Community.css';
 
@@ -12,6 +12,21 @@ const api = axios.create({
   timeout: 60000
 });
 
+// Memoized Message Component to prevent unnecessary re-renders
+const Message = React.memo(({ msg, idx }) => (
+  <div key={idx} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
+    <div className="message-meta">
+      <span className="message-sender">{msg.userName}</span>
+      <span className="message-time">
+        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </span>
+    </div>
+    <div className="message-content">{msg.text}</div>
+  </div>
+));
+
+Message.displayName = 'Message';
+
 function Community({ user }) {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -19,9 +34,18 @@ function Community({ user }) {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [initialLoadingComplete, setInitialLoadingComplete] = useState(false);
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const hasUserSentMessage = useRef(false);
+  const pollIntervalRef = useRef(null);
+  const lastMessageCountRef = useRef(0);
+
+  // Display only the last 30 messages to improve performance
+  const displayedMessages = useMemo(() => {
+    const limit = 30;
+    return messages.length > limit ? messages.slice(-limit) : messages;
+  }, [messages]);
 
   useEffect(() => {
     fetchRooms();
@@ -29,19 +53,27 @@ function Community({ user }) {
 
   useEffect(() => {
     if (selectedRoom) {
+      setInitialLoadingComplete(false);
       fetchMessages();
-      const interval = setInterval(fetchMessages, 3000);
-      return () => clearInterval(interval);
+      // Increased polling interval from 3s to 5s to reduce server load and re-renders
+      pollIntervalRef.current = setInterval(fetchMessages, 5000);
+      return () => {
+        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+      };
     }
   }, [selectedRoom]);
 
   useEffect(() => {
     // Only auto-scroll if user just sent a message
     if (hasUserSentMessage.current && messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      requestAnimationFrame(() => {
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        }
+      });
       hasUserSentMessage.current = false;
     }
-  }, [messages]);
+  }, [displayedMessages]);
 
   const fetchRooms = useCallback(async () => {
     try {
@@ -59,11 +91,19 @@ function Community({ user }) {
     if (!selectedRoom) return;
     try {
       const response = await api.get(`/community-rooms/${selectedRoom}/messages`);
-      setMessages(response.data);
+      const newCount = response.data.length;
+      // Only update state if message count changed to reduce unnecessary re-renders
+      if (newCount !== lastMessageCountRef.current) {
+        setMessages(response.data);
+        lastMessageCountRef.current = newCount;
+      }
+      if (!initialLoadingComplete) {
+        setInitialLoadingComplete(true);
+      }
     } catch (err) {
       console.error('Error fetching messages:', err);
     }
-  }, [selectedRoom]);
+  }, [selectedRoom, initialLoadingComplete]);
 
   const handleSendMessage = useCallback(async (e) => {
     e.preventDefault();
@@ -79,7 +119,12 @@ function Community({ user }) {
         text: newMessage
       });
 
-      setMessages(prev => [...prev, response.data.userMessage, response.data.aiMessage]);
+      // Only add aiMessage if it exists (not null for meetup rooms)
+      if (response.data.aiMessage) {
+        setMessages(prev => [...prev, response.data.userMessage, response.data.aiMessage]);
+      } else {
+        setMessages(prev => [...prev, response.data.userMessage]);
+      }
       setNewMessage('');
     } catch (err) {
       console.error('Error sending message:', err);
@@ -148,21 +193,18 @@ function Community({ user }) {
 
               {/* Messages */}
               <div className="messages-container" ref={messagesContainerRef}>
-                {messages.length === 0 ? (
+                {!initialLoadingComplete ? (
+                  <div className="loading-spinner">
+                    <div className="spinner"></div>
+                    <p>Loading messages...</p>
+                  </div>
+                ) : displayedMessages.length === 0 ? (
                   <div className="no-messages">
                     <p>💬 No messages yet. Be the first to start a conversation!</p>
                   </div>
                 ) : (
-                  messages.map((msg, idx) => (
-                    <div key={idx} className={`message ${msg.isAI ? 'ai-message' : 'user-message'}`}>
-                      <div className="message-meta">
-                        <span className="message-sender">{msg.userName}</span>
-                        <span className="message-time">
-                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      <div className="message-content">{msg.text}</div>
-                    </div>
+                  displayedMessages.map((msg, idx) => (
+                    <Message key={`${msg._id || idx}`} msg={msg} idx={idx} />
                   ))
                 )}
                 <div ref={messagesEndRef} />

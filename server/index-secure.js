@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { body, param, validationResult } from 'express-validator';
+import { body, param, query, validationResult } from 'express-validator';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import purify from 'isomorphic-dompurify';
@@ -17,10 +17,14 @@ const PORT = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const JWT_EXPIRY = '24h';
 
-// Security Middleware
+// ============================================================================
+// SECURITY MIDDLEWARE
+// ============================================================================
+
+// Helmet for security headers
 app.use(helmet());
 
-// CORS configuration - whitelist specific origins
+// CORS with explicit whitelist
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
   : [
@@ -43,40 +47,57 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Rate limiting
+// Rate limiting - general
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 100, // requests per windowMs
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
 });
 
+// Rate limiting - authentication
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5, // limit auth attempts
+  max: 5, // 5 attempts per 15 minutes
   message: 'Too many authentication attempts, please try again later.',
   skipSuccessfulRequests: true,
 });
 
 app.use(limiter);
 
-// Limit JSON payload size
+// Limit JSON payload size to 5MB
 app.use(express.json({ limit: '5mb' }));
 
-// Limit JSON payload size
-app.use(express.json({ limit: '5mb' }));
-
-// Validation middleware helper
+// Validation error handler
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ error: 'Validation failed', details: errors.array() });
+    return res.status(400).json({ error: 'Validation failed' });
   }
   next();
 };
 
-// Dog Schema and Model
+// Input sanitization helper
+const sanitizeInput = (input) => {
+  if (typeof input !== 'string') return input;
+  return purify.sanitize(input).trim();
+};
+
+// ============================================================================
+// DATABASE SCHEMAS
+// ============================================================================
+
+// User Schema - for authentication
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true, match: /.+\@.+\..+/ },
+  password: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const User = mongoose.model('User', userSchema);
+
+// Dog Schema
 const dogSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 100 },
   breed: { type: String, trim: true, maxlength: 100 },
@@ -101,15 +122,6 @@ const dogSchema = new mongoose.Schema({
 
 const Dog = mongoose.model('Dog', dogSchema);
 
-// User Schema
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const User = mongoose.model('User', userSchema);
-
 // Community Room Schema
 const communityRoomSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, maxlength: 100 },
@@ -122,18 +134,21 @@ const CommunityRoom = mongoose.model('CommunityRoom', communityRoomSchema);
 
 // Message Schema
 const messageSchema = new mongoose.Schema({
-  roomId: { type: String, required: true, index: true },
+  roomId: { type: String, required: true },
   userId: String,
   userName: { type: String, trim: true, maxlength: 100 },
   userEmail: { type: String, trim: true, maxlength: 254 },
   text: { type: String, required: true, trim: true, maxlength: 1000 },
   isAI: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now, index: true }
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Message = mongoose.model('Message', messageSchema);
 
-// Authentication Middleware
+// ============================================================================
+// AUTHENTICATION MIDDLEWARE
+// ============================================================================
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -152,18 +167,12 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Helper function to sanitize user input
-const sanitizeInput = (input) => {
-  if (typeof input !== 'string') return input;
-  return purify.sanitize(input).trim();
-};
-
-// AI API Integration (using Fetch for any API)
-const AI_API_KEY = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY;
+// ============================================================================
+// AI RESPONSE HELPER
+// ============================================================================
 
 async function getAIResponse(question, roomTopic) {
   try {
-    // Using Claude API via Anthropic if available
     if (process.env.ANTHROPIC_API_KEY) {
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -177,15 +186,13 @@ async function getAIResponse(question, roomTopic) {
           max_tokens: 500,
           messages: [{
             role: 'user',
-            content: `You are a helpful dog expert in the "${roomTopic}" community room. Answer this question concisely (1-2 sentences): ${sanitizeInput(question)}`
+            content: `You are a helpful dog expert in the "${sanitizeInput(roomTopic)}" community room. Answer this question concisely (1-2 sentences): ${sanitizeInput(question)}`
           }]
         })
       });
       const data = await response.json();
       return data.content?.[0]?.text || "I'm unable to answer that question right now.";
     }
-    
-    // Fallback: Simple rule-based responses
     return getDefaultDogAdvice(question, roomTopic);
   } catch (err) {
     console.error('Error getting AI response:', err);
@@ -226,18 +233,111 @@ function getDefaultDogAdvice(question, roomTopic) {
   return topicResponses[Math.floor(Math.random() * topicResponses.length)];
 }
 
-// Routes
+// ============================================================================
+// ROUTES - HEALTH & AUTHENTICATION
+// ============================================================================
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Community Rooms
+// Register new user
+app.post('/auth/register', [
+  authLimiter,
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+], handleValidationErrors, async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ error: 'Email already registered' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    // Create new user
+    const user = new User({ email, password: hashedPassword });
+    await user.save();
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
+
+    res.status(201).json({ 
+      message: 'User registered successfully',
+      token,
+      user: { id: user._id, email: user.email }
+    });
+  } catch (err) {
+    console.error('Registration error:', err.message);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// Login
+app.post('/auth/login', [
+  authLimiter,
+  body('email').isEmail().normalizeEmail(),
+  body('password').notEmpty()
+], handleValidationErrors, async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Verify password
+    const isValidPassword = await bcryptjs.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
+
+    res.json({ 
+      message: 'Login successful',
+      token,
+      user: { id: user._id, email: user.email }
+    });
+  } catch (err) {
+    console.error('Login error:', err.message);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// Guest login
+app.post('/auth/guest', [authLimiter], async (req, res) => {
+  try {
+    const guestId = 'guest_' + Date.now();
+    const token = jwt.sign({ id: guestId, email: 'guest@pawsocial.app', isGuest: true }, JWT_SECRET, { expiresIn: JWT_EXPIRY });
+    
+    res.json({
+      message: 'Guest login successful',
+      token,
+      user: { id: guestId, email: 'guest@pawsocial.app', isGuest: true }
+    });
+  } catch (err) {
+    console.error('Guest login error:', err.message);
+    res.status(500).json({ error: 'Guest login failed' });
+  }
+});
+
+// ============================================================================
+// ROUTES - COMMUNITY ROOMS
+// ============================================================================
+
 app.get('/community-rooms', async (req, res) => {
   try {
     let rooms = await CommunityRoom.find();
     
     if (rooms.length === 0) {
-      // Create default rooms
       const defaultRooms = [
         { name: 'Dog Training & Behavior', topic: 'Dog Training & Behavior', description: 'Tips, advice, and discussion about obedience, behavior problems, and training techniques' },
         { name: 'Health & Wellness', topic: 'Health & Wellness', description: 'Nutrition, exercise, grooming, vet care, and dog health concerns' },
@@ -253,29 +353,26 @@ app.get('/community-rooms', async (req, res) => {
     res.json(rooms);
   } catch (err) {
     console.error('Error fetching rooms:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to fetch rooms' });
   }
 });
 
-app.get('/community-rooms/:roomId/messages', async (req, res) => {
+app.get('/community-rooms/:roomId/messages', [param('roomId').isMongoId()], handleValidationErrors, async (req, res) => {
   try {
-    // Use lean() to return plain objects instead of Mongoose documents for better performance
     const messages = await Message.find({ roomId: req.params.roomId })
       .sort({ createdAt: 1 })
-      .limit(50)
-      .lean()
-      .exec();
-    
-    // Add caching headers for better performance
-    res.set('Cache-Control', 'public, max-age=5');
+      .limit(50);
     res.json(messages);
   } catch (err) {
     console.error('Error fetching messages:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to fetch messages' });
   }
 });
 
-app.post('/community-rooms/:roomId/message', async (req, res) => {
+app.post('/community-rooms/:roomId/message', [
+  param('roomId').isMongoId(),
+  body('text').notEmpty().trim().isLength({ max: 1000 })
+], handleValidationErrors, async (req, res) => {
   try {
     const { userId, userName, userEmail, text } = req.body;
     const { roomId } = req.params;
@@ -284,13 +381,13 @@ app.post('/community-rooms/:roomId/message', async (req, res) => {
       return res.status(400).json({ error: 'Message cannot be empty' });
     }
     
-    // Save user message
+    // Save user message with sanitized text
     const userMessage = new Message({
       roomId,
       userId,
-      userName: userName || 'Anonymous',
-      userEmail,
-      text: text.trim(),
+      userName: sanitizeInput(userName || 'Anonymous'),
+      userEmail: sanitizeInput(userEmail),
+      text: sanitizeInput(text),
       isAI: false
     });
     
@@ -321,56 +418,72 @@ app.post('/community-rooms/:roomId/message', async (req, res) => {
     }
   } catch (err) {
     console.error('Error posting message:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to post message' });
   }
 });
 
-// Routes
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
+// ============================================================================
+// ROUTES - DOGS
+// ============================================================================
 
-app.post('/dogs/create', async (req, res) => {
+app.post('/dogs/create', [
+  authenticateToken,
+  body('name').trim().isLength({ min: 1, max: 100 }),
+  body('breed').optional().trim().isLength({ max: 100 }),
+  body('age').optional().isInt({ min: 0, max: 50 }),
+  body('images').isArray({ min: 1 }).custom((images) => {
+    // Validate each image is a proper base64 string
+    return images.every(img => typeof img === 'string' && img.startsWith('data:image/') && img.length < 5242880);
+  })
+], handleValidationErrors, async (req, res) => {
   try {
-    const { name, breed, age, gender, energy, temperament, vaccinated, images, city, zip, userId } = req.body;
+    const { name, breed, age, gender, energy, temperament, vaccinated, images, city, zip } = req.body;
+    const userId = req.user.id;
     
     // Validate images
     const validImages = images && images.length > 0 
-      ? images.filter(img => typeof img === 'string' && img.length > 100) // Ensure valid base64
+      ? images.filter(img => typeof img === 'string' && img.startsWith('data:image/'))
       : [];
     
-    if (validImages.length === 0 && images && images.length > 0) {
-      return res.status(400).json({ error: 'Invalid image data. Please upload a valid image.' });
+    if (validImages.length === 0) {
+      return res.status(400).json({ error: 'At least one valid image is required' });
     }
     
+    // Limit images per dog to 5
+    const limitedImages = validImages.slice(0, 5);
+    
     const dog = new Dog({
-      name,
-      breed,
+      name: sanitizeInput(name),
+      breed: sanitizeInput(breed),
       age,
-      gender,
-      energy,
-      temperament: temperament || [],
+      gender: sanitizeInput(gender),
+      energy: sanitizeInput(energy),
+      temperament: (temperament || []).map(t => sanitizeInput(t)),
       vaccinated,
-      images: validImages || [],
-      city,
-      zip,
+      images: limitedImages,
+      city: sanitizeInput(city),
+      zip: sanitizeInput(zip),
       userId,
       likes: [],
       comments: []
     });
 
     await dog.save();
-    res.json(dog);
+    res.status(201).json(dog);
   } catch (err) {
-    console.error('Error:', err);
-    res.status(500).json({ error: err.message });
+    console.error('Error creating dog:', err);
+    res.status(500).json({ error: 'Failed to create dog profile' });
   }
 });
 
-app.get('/dogs/all', async (req, res) => {
+app.get('/dogs/all', [
+  query('skip').optional().isInt({ min: 0 }),
+  query('limit').optional().isInt({ min: 1, max: 100 })
+], handleValidationErrors, async (req, res) => {
   try {
     const skip = parseInt(req.query.skip || 0);
-    const limit = parseInt(req.query.limit || 20);
+    const limit = Math.min(parseInt(req.query.limit || 20), 100);
+    
     const dogs = await Dog.find()
       .select('-images')
       .sort({ createdAt: -1 })
@@ -378,22 +491,25 @@ app.get('/dogs/all', async (req, res) => {
       .limit(limit);
     res.json(dogs);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error fetching dogs:', err);
+    res.status(500).json({ error: 'Failed to fetch dogs' });
   }
 });
 
-// Get dog with images
-app.get('/dogs/:id/full', async (req, res) => {
+app.get('/dogs/:id/full', [param('id').isMongoId()], handleValidationErrors, async (req, res) => {
   try {
     const dog = await Dog.findById(req.params.id);
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
     res.json(dog);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error fetching dog:', err);
+    res.status(500).json({ error: 'Failed to fetch dog' });
   }
 });
 
-// Get only image for a dog
-app.get('/dogs/:id/image', async (req, res) => {
+app.get('/dogs/:id/image', [param('id').isMongoId()], handleValidationErrors, async (req, res) => {
   try {
     const dog = await Dog.findById(req.params.id).select('images');
     
@@ -401,27 +517,32 @@ app.get('/dogs/:id/image', async (req, res) => {
       return res.status(404).json({ error: 'Dog not found' });
     }
     
-    // Filter and return only valid images
-    const validImages = dog?.images?.filter(img => typeof img === 'string' && img.length > 100) || [];
-    
+    const validImages = dog?.images?.filter(img => typeof img === 'string' && img.startsWith('data:image/')) || [];
     res.json(validImages);
   } catch (err) {
     console.error('Error fetching image:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Failed to fetch image' });
   }
 });
 
-app.get('/dogs/:id', async (req, res) => {
+app.get('/dogs/:id', [param('id').isMongoId()], handleValidationErrors, async (req, res) => {
   try {
     const dog = await Dog.findById(req.params.id);
+    if (!dog) {
+      return res.status(404).json({ error: 'Dog not found' });
+    }
     res.json(dog);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error fetching dog:', err);
+    res.status(500).json({ error: 'Failed to fetch dog' });
   }
 });
 
-// Like/Unlike a dog
-app.post('/dogs/:id/like', async (req, res) => {
+app.post('/dogs/:id/like', [
+  authenticateToken,
+  param('id').isMongoId(),
+  body('userId').notEmpty()
+], handleValidationErrors, async (req, res) => {
   try {
     const { userId } = req.body;
     const dog = await Dog.findById(req.params.id);
@@ -437,43 +558,58 @@ app.post('/dogs/:id/like', async (req, res) => {
     await dog.save();
     res.json(dog);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error liking dog:', err);
+    res.status(500).json({ error: 'Failed to like dog' });
   }
 });
 
-// Add comment to a dog
-app.post('/dogs/:id/comment', async (req, res) => {
+app.post('/dogs/:id/comment', [
+  authenticateToken,
+  param('id').isMongoId(),
+  body('text').trim().isLength({ min: 1, max: 500 })
+], handleValidationErrors, async (req, res) => {
   try {
     const { userId, userName, text } = req.body;
     const dog = await Dog.findById(req.params.id);
     
     if (!dog) return res.status(404).json({ error: 'Dog not found' });
     
-    dog.comments.push({ userId, userName, text });
+    dog.comments.push({ 
+      userId, 
+      userName: sanitizeInput(userName || 'Anonymous'),
+      text: sanitizeInput(text)
+    });
     await dog.save();
     res.json(dog);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error adding comment:', err);
+    res.status(500).json({ error: 'Failed to add comment' });
   }
 });
 
-// Delete a dog (owner only)
-app.delete('/dogs/:id', async (req, res) => {
+app.delete('/dogs/:id', [
+  authenticateToken,
+  param('id').isMongoId()
+], handleValidationErrors, async (req, res) => {
   try {
     const { userId } = req.body;
     const dog = await Dog.findById(req.params.id);
     
     if (!dog) return res.status(404).json({ error: 'Dog not found' });
-    if (dog.userId !== userId) return res.status(403).json({ error: 'Not authorized' });
+    if (dog.userId !== userId) return res.status(403).json({ error: 'Not authorized to delete this dog' });
     
     await Dog.findByIdAndDelete(req.params.id);
     res.json({ message: 'Dog deleted successfully' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Error deleting dog:', err);
+    res.status(500).json({ error: 'Failed to delete dog' });
   }
 });
 
-// Start Server
+// ============================================================================
+// SERVER START
+// ============================================================================
+
 async function start() {
   try {
     let mongoUrl = process.env.MONGO_URL;
