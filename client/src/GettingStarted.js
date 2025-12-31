@@ -20,7 +20,7 @@ function GettingStarted({ onEnter, onCommunity }) {
     { 
       id: 3, 
       icon: '📖', 
-      name: 'Breed Discussion',
+      name: 'Breeding Room',
       description: 'Explore breed-specific traits, standards, and characteristics',
       summary: 'Deep dive into specific dog breeds. Discuss breed characteristics, temperament, care requirements, and connect with other owners of the same breed.'
     },

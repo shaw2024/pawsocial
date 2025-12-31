@@ -257,7 +257,7 @@ app.get('/community-rooms', async (req, res) => {
       const defaultRooms = [
         { name: 'Dog Training & Behavior', topic: 'Dog Training & Behavior', description: 'Tips, advice, and discussion about obedience, behavior problems, and training techniques' },
         { name: 'Health & Wellness', topic: 'Health & Wellness', description: 'Nutrition, exercise, grooming, vet care, and dog health concerns' },
-        { name: 'Breed Discussion', topic: 'Breed Discussion', description: 'Breed-specific information, characteristics, and owner experiences' },
+        { name: 'Breeding Room', topic: 'Breeding Room', description: 'Breed-specific information, characteristics, and owner experiences' },
         { name: 'Playtime & Activities', topic: 'Playtime & Activities', description: 'Dog sports, games, activities, and entertainment ideas' },
         { name: 'Puppies & New Owners', topic: 'Puppies & New Owners', description: 'First-time owner advice, puppy care, and parenting tips' },
         { name: 'Meetup', topic: 'Meetup', description: 'Organize local dog meetups and connect with other dog owners in your area' },
