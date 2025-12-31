@@ -360,8 +360,12 @@
   }
 
   .feature-link-btn {
-    padding: 8px 16px;
-    font-size: 12px;
+    padding: 10px 20px;
+    font-size: 14px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .how-it-works,
@@ -423,6 +427,14 @@
     margin-bottom: 12px;
   }
 
+  .room-link-btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 44px;
+    align-self: center;
+    width: 100%;
+  }
+
   .action-buttons {
     flex-direction: column;
     gap: 12px;
@@ -434,6 +446,7 @@
     padding: 12px 30px;
     font-size: 14px;
     width: 100%;
+    min-height: 44px;
   }
 
   .info-banner {
