@@ -11,7 +11,7 @@ const api = axios.create({
   timeout: 60000
 });
 
-function Community({ user }) {
+function Community({ user, selectedRoomName }) {
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -33,6 +33,17 @@ function Community({ user }) {
       try {
         const response = await api.get('/community-rooms');
         setRooms(response.data);
+        
+        // If selectedRoomName is provided, find and select that room
+        if (selectedRoomName) {
+          const room = response.data.find(r => r.name === selectedRoomName);
+          if (room) {
+            setSelectedRoom(room._id);
+            return;
+          }
+        }
+        
+        // Otherwise, default to first room
         if (response.data.length > 0) {
           setSelectedRoom(response.data[0]._id);
         }
@@ -41,7 +52,7 @@ function Community({ user }) {
       }
     };
     fetchRooms();
-  }, []);
+  }, [selectedRoomName]);
 
   useEffect(() => {
     if (!selectedRoom) return;

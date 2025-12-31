@@ -7,43 +7,50 @@ function GettingStarted({ onEnter, onCommunity }) {
       id: 1, 
       icon: '🎓', 
       name: 'Dog Training & Behavior',
-      description: 'Learn obedience tips, behavior training, and solutions to common challenges'
+      description: 'Learn obedience tips, behavior training, and solutions to common challenges',
+      summary: 'Master dog training techniques, address behavioral issues, and learn effective communication with your furry friend from experienced trainers and fellow dog owners.'
     },
     { 
       id: 2, 
       icon: '💪', 
       name: 'Health & Wellness',
-      description: 'Discuss nutrition, exercise routines, vaccinations, and veterinary care'
+      description: 'Discuss nutrition, exercise routines, vaccinations, and veterinary care',
+      summary: 'Share health concerns, nutrition tips, exercise plans, and veterinary advice. Get recommendations for keeping your dogs healthy and fit at every life stage.'
     },
     { 
       id: 3, 
       icon: '📖', 
       name: 'Breed Discussion',
-      description: 'Explore breed-specific traits, standards, and characteristics'
+      description: 'Explore breed-specific traits, standards, and characteristics',
+      summary: 'Deep dive into specific dog breeds. Discuss breed characteristics, temperament, care requirements, and connect with other owners of the same breed.'
     },
     { 
       id: 4, 
       icon: '🎮', 
       name: 'Playtime & Activities',
-      description: 'Share games, sports, tricks, and fun activities for your dogs'
+      description: 'Share games, sports, tricks, and fun activities for your dogs',
+      summary: 'Discover fun activities and games to keep your dogs entertained. Share tricks, sports, outdoor adventures, and creative ways to enrich your dog\'s life.'
     },
     { 
       id: 5, 
       icon: '👶', 
       name: 'Puppies & New Owners',
-      description: 'Get advice on puppy training, care, and preparation for new pet owners'
+      description: 'Get advice on puppy training, care, and preparation for new pet owners',
+      summary: 'Perfect for new dog owners! Get guidance on puppy care, house training, socialization, veterinary schedules, and everything you need to know as a first-time owner.'
     },
     { 
       id: 6, 
       icon: '🐾', 
       name: 'Meetup',
-      description: 'Organize local dog meetups, playdates, and community gatherings'
+      description: 'Organize local dog meetups, playdates, and community gatherings',
+      summary: 'Connect with local dog owners in your area. Plan dog parks visits, playdates, training sessions, and community events to socialize your dogs.'
     },
     { 
       id: 7, 
       icon: '❤️', 
       name: 'Breeding Discussion',
-      description: 'Connect with responsible breeders and find compatible partners'
+      description: 'Connect with responsible breeders and find compatible partners',
+      summary: 'For responsible breeders and those interested in breeding. Find compatible breeding partners, discuss best practices, and share experiences.'
     }
   ];
 
@@ -68,21 +75,21 @@ function GettingStarted({ onEnter, onCommunity }) {
             <div className="feature-icon">💬</div>
             <h3>Chat & Connect</h3>
             <p>Join various rooms to chat with other dog owners. Discuss training tips, health concerns, breed information, and playtime activities in our dedicated community forums.</p>
-            <button className="feature-link-btn" onClick={onCommunity}>Browse Rooms →</button>
+            <button className="feature-link-btn" onClick={() => onCommunity()}>Browse Rooms →</button>
           </div>
 
           <div className="feature-card">
             <div className="feature-icon">🐾</div>
             <h3>Organize Meetups</h3>
             <p>Schedule local dog meetups to connect with other owners in your area. Plan playdates, socialize your dogs, and build friendships in the community.</p>
-            <button className="feature-link-btn" onClick={onCommunity}>Find Meetups →</button>
+            <button className="feature-link-btn" onClick={() => onCommunity('Meetup')}>Find Meetups →</button>
           </div>
 
           <div className="feature-card">
             <div className="feature-icon">❤️</div>
             <h3>Breeding Room</h3>
             <p>Find compatible dogs for breeding. Connect with responsible dog owners who share your breed interests and breeding goals.</p>
-            <button className="feature-link-btn" onClick={onCommunity}>Visit Breeding Room →</button>
+            <button className="feature-link-btn" onClick={() => onCommunity('Breeding Discussion')}>Visit Breeding Room →</button>
           </div>
         </div>
 
@@ -130,10 +137,11 @@ function GettingStarted({ onEnter, onCommunity }) {
                   <span className="room-icon">{room.icon}</span>
                   <h3>{room.name}</h3>
                 </div>
-                <p className="room-description">{room.description}</p>
+                <p className="room-short-desc">{room.description}</p>
+                <p className="room-full-summary">{room.summary}</p>
                 <button 
                   className="room-link-btn"
-                  onClick={onCommunity}
+                  onClick={() => onCommunity(room.name)}
                   title={`Join ${room.name}`}
                 >
                   Join Room →
@@ -147,7 +155,7 @@ function GettingStarted({ onEnter, onCommunity }) {
           <button className="enter-btn" onClick={onEnter}>
             👤 Set Up Profile & Post Dogs
           </button>
-          <button className="community-btn" onClick={onCommunity}>
+          <button className="community-btn" onClick={() => onCommunity()}>
             💬 Go to Community Rooms
           </button>
         </div>
