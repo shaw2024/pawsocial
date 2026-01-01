@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 80px;
   right: 20px;
-  z-index: 998;
+  z-index: 2000;
   font-family: inherit;
 }
 
@@ -21,6 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 2000;
 }
 
 .help-chatbox-button:hover {
@@ -41,6 +42,7 @@
   flex-direction: column;
   overflow: hidden;
   animation: slideUp 0.3s ease;
+  z-index: 2000;
 }
 
 @keyframes slideUp {
@@ -52,6 +54,16 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.help-chatbox-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1999;
+  background: transparent;
 }
 
 .help-chatbox-header {

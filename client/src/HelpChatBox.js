@@ -89,6 +89,9 @@ function HelpChatBox() {
 
   return (
     <div className="help-chatbox-container">
+      {isOpen && (
+        <div className="help-chatbox-backdrop" onClick={() => setIsOpen(false)} />
+      )}
       {isOpen ? (
         <div className="help-chatbox-window">
           <div className="help-chatbox-header">
